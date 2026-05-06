@@ -16,56 +16,37 @@
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0c0e14;
-      --panel: #13151e;
-      --panel2: #1a1d28;
-      --border: rgba(255,255,255,.08);
-      --border2: rgba(255,255,255,.13);
-      --text: #f0f0f5;
-      --muted: #6b7084;
-      --accent: #5b8af0;
-      --accent-dim: rgba(91,138,240,.12);
-      --ok: #2fd4a0;
-      --ok-bg: rgba(47,212,160,.1);
-      --warn: #f0a832;
-      --warn-bg: rgba(240,168,50,.1);
-      --bad: #f05b5b;
-      --bad-bg: rgba(240,91,91,.12);
+      --bg: #0c0e14; --panel: #13151e; --panel2: #1a1d28;
+      --border: rgba(255,255,255,.08); --border2: rgba(255,255,255,.13);
+      --text: #f0f0f5; --muted: #6b7084;
+      --accent: #5b8af0; --accent-dim: rgba(91,138,240,.12);
+      --ok: #2fd4a0; --ok-bg: rgba(47,212,160,.1);
+      --warn: #f0a832; --warn-bg: rgba(240,168,50,.1);
+      --bad: #f05b5b; --bad-bg: rgba(240,91,91,.12);
       --pill-bg: rgba(255,255,255,.06);
-      --shadow: 0 24px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Geist', system-ui, -apple-system, sans-serif;
-      font-feature-settings: "liga";
-      letter-spacing: -.01em;
-      min-height: 100vh;
+      background: var(--bg); color: var(--text);
+      font-family: 'Geist', system-ui, sans-serif;
+      font-feature-settings: "liga"; letter-spacing: -.01em; min-height: 100vh;
     }
     body::before {
-      content: "";
-      position: fixed; inset: 0; pointer-events: none;
+      content: ""; position: fixed; inset: 0; pointer-events: none;
       background-image:
         linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
       background-size: 44px 44px;
-      mask-image: linear-gradient(to bottom, black, transparent 80%);
-      z-index: 0;
+      mask-image: linear-gradient(to bottom, black, transparent 80%); z-index: 0;
     }
-
-    /* ── Header ── */
     header {
       position: sticky; top: 0; z-index: 10;
-      background: rgba(12,14,20,.85);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 28px;
+      background: rgba(12,14,20,.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); padding: 0 28px;
     }
     .nav {
-      max-width: 1300px; margin: 0 auto;
-      height: 62px;
+      max-width: 1300px; margin: 0 auto; height: 62px;
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
     }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
@@ -79,8 +60,8 @@
     .nav-center { display: flex; gap: 4px; }
     .nav-btn {
       background: transparent; border: none; color: var(--muted);
-      font: 500 13px Geist, sans-serif;
-      padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all .15s;
+      font: 500 13px Geist, sans-serif; padding: 6px 12px;
+      border-radius: 8px; cursor: pointer; transition: all .15s;
     }
     .nav-btn:hover { color: var(--text); background: var(--pill-bg); }
     .nav-btn.active { color: var(--text); background: var(--panel2); }
@@ -94,11 +75,7 @@
     .refresh-btn:hover { background: var(--accent); border-color: var(--accent); }
     .refresh-btn svg { width: 13px; height: 13px; transition: transform .5s; }
     .refresh-btn.spinning svg { transform: rotate(360deg); }
-
-    /* ── Layout ── */
     main { max-width: 1300px; margin: 0 auto; padding: 28px 28px 80px; position: relative; z-index: 1; }
-
-    /* ── Stats Bar ── */
     .stats-bar { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
     .stat-pill {
       display: flex; align-items: center; gap: 8px;
@@ -108,16 +85,8 @@
     .stat-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
     .stat-pill .val { font-weight: 700; font-family: 'Geist Mono', monospace; }
     .stat-pill .lbl { color: var(--muted); }
-    .stat-pill .src-breakdown {
-      font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted);
-      display: flex; gap: 6px; flex-wrap: wrap;
-    }
-    .src-chip {
-      background: var(--pill-bg); border: 1px solid var(--border);
-      border-radius: 5px; padding: 1px 6px;
-    }
-
-    /* ── Search ── */
+    .src-breakdown { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); display: flex; gap: 6px; flex-wrap: wrap; }
+    .src-chip { background: var(--pill-bg); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; }
     .search-wrap { position: relative; margin-bottom: 20px; }
     .search-input {
       width: 100%; height: 44px;
@@ -129,14 +98,7 @@
     .search-input::placeholder { color: var(--muted); }
     .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,138,240,.14); }
     .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--muted); pointer-events: none; }
-
-    /* ── Section Title ── */
-    .section-title {
-      font-size: 12px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .08em; color: var(--muted); margin-bottom: 14px;
-    }
-
-    /* ── Service Cards Grid ── */
+    .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 14px; }
     .services-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
@@ -159,21 +121,14 @@
     .service-card.degraded::before { background: var(--warn); }
     .service-card.down::before { background: var(--bad); }
     .service-card.unknown::before { background: var(--muted); }
-
     .service-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .service-name { font-weight: 600; font-size: 14px; }
-    .service-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-    }
+    .service-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .up .service-dot { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
     .degraded .service-dot { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
     .down .service-dot { background: var(--bad); box-shadow: 0 0 10px var(--bad); animation: pulse-down 1.4s infinite; }
     .unknown .service-dot { background: var(--muted); }
-    @keyframes pulse-down {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: .4; transform: scale(.8); }
-    }
-
+    @keyframes pulse-down { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.8); } }
     .service-badge {
       display: inline-flex; align-items: center; gap: 4px;
       font-size: 10px; font-weight: 700; font-family: 'Geist Mono', monospace;
@@ -185,19 +140,10 @@
     .down .service-badge { background: var(--bad-bg); color: var(--bad); animation: badge-pulse .8s infinite alternate; }
     .unknown .service-badge { background: var(--pill-bg); color: var(--muted); }
     @keyframes badge-pulse { from { opacity: 1; } to { opacity: .65; } }
-
-    .service-sources {
-      display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px;
-    }
-    .src-tag {
-      font-size: 10px; font-family: 'Geist Mono', monospace;
-      background: var(--pill-bg); border: 1px solid var(--border);
-      border-radius: 4px; padding: 1px 5px; color: var(--muted);
-    }
+    .service-sources { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+    .src-tag { font-size: 10px; font-family: 'Geist Mono', monospace; background: var(--pill-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; color: var(--muted); }
     .service-meta { font-size: 11px; color: var(--muted); font-family: 'Geist Mono', monospace; }
     .service-incident { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-    /* ── Incident Feed ── */
     .feed-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
     .feed-title-group { display: flex; align-items: baseline; gap: 10px; }
     .feed-title { font-size: 15px; font-weight: 600; }
@@ -212,7 +158,6 @@
     .filter-btn.active.down { color: var(--bad); border-color: var(--bad); background: var(--bad-bg); }
     .filter-btn.active.all { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
     .filter-btn.active.degraded { color: var(--warn); border-color: var(--warn); background: var(--warn-bg); }
-
     .incidents-list { display: flex; flex-direction: column; gap: 10px; }
     .incident-card {
       background: var(--panel); border: 1px solid var(--border);
@@ -221,15 +166,11 @@
       position: relative; overflow: hidden;
     }
     .incident-card:hover { border-color: var(--border2); box-shadow: 0 4px 16px rgba(0,0,0,.25); }
-    .incident-card::before {
-      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-      border-radius: 14px 0 0 14px;
-    }
+    .incident-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 14px 0 0 14px; }
     .incident-card.down::before { background: var(--bad); }
     .incident-card.degraded::before { background: var(--warn); }
     .incident-card.down { border-color: rgba(240,91,91,.22); }
     .incident-card.degraded { border-color: rgba(240,168,50,.18); }
-
     .incident-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
     .incident-left { display: flex; align-items: center; gap: 8px; }
     .incident-service { font-weight: 700; font-size: 14px; }
@@ -240,113 +181,53 @@
     }
     .incident-card.down .incident-type-chip { background: var(--bad-bg); color: var(--bad); }
     .incident-card.degraded .incident-type-chip { background: var(--warn-bg); color: var(--warn); }
-
     .incident-title { font-size: 13px; color: var(--text); line-height: 1.55; margin-bottom: 10px; }
     .incident-sources { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .source-tag {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 11px; font-weight: 600;
-      padding: 3px 9px; border-radius: 6px;
-    }
+    .source-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 6px; }
     .source-tag.reddit { background: rgba(255,69,0,.1); border: 1px solid rgba(255,69,0,.3); color: #ff4500; }
     .source-tag.statuspage { background: var(--accent-dim); border: 1px solid rgba(91,138,240,.3); color: var(--accent); }
     .source-tag.downdetector { background: var(--warn-bg); border: 1px solid rgba(240,168,50,.3); color: var(--warn); }
     .source-tag.healthcheck { background: var(--pill-bg); border: 1px solid var(--border); color: var(--muted); }
     .source-tag.twitter { background: rgba(29,155,240,.1); border: 1px solid rgba(29,155,240,.3); color: #1d9bf0; }
-
-    .incident-link {
-      color: var(--muted); font-size: 11px; text-decoration: none;
-      display: inline-flex; align-items: center; gap: 4px; transition: color .15s;
-    }
+    .incident-link { color: var(--muted); font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: color .15s; }
     .incident-link:hover { color: var(--text); }
     .incident-link svg { width: 11px; height: 11px; }
-
-    .incident-meta {
-      display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap;
-    }
-    .incident-meta-item {
-      font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted);
-    }
+    .incident-meta { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+    .incident-meta-item { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); }
     .incident-meta-item span { color: var(--text); font-weight: 500; }
-
-    /* ── Source legend ── */
-    .source-legend {
-      display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
-      padding: 12px 16px; background: var(--panel);
-      border: 1px solid var(--border); border-radius: 12px;
-    }
+    .source-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; padding: 12px 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
     .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-    /* ── Empty / Loading States ── */
     .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: .35; }
     .empty-state p { font-size: 14px; }
-
-    .skeleton {
-      background: linear-gradient(90deg, var(--panel) 25%, var(--panel2) 50%, var(--panel) 75%);
-      background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 14px;
-    }
+    .skeleton { background: linear-gradient(90deg, var(--panel) 25%, var(--panel2) 50%, var(--panel) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 14px; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     .skeleton-card { height: 108px; }
-    .skeleton-row { height: 88px; }
-
-    /* ── Toast ── */
-    .toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-      background: var(--panel2); border: 1px solid var(--border2);
-      color: var(--text); font-size: 13px; font-weight: 500;
-      padding: 10px 18px; border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,.5);
-      transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-      z-index: 100; white-space: nowrap;
-    }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--panel2); border: 1px solid var(--border2); color: var(--text); font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.5); transition: transform .3s cubic-bezier(.34,1.56,.64,1); z-index: 100; white-space: nowrap; }
     .toast.show { transform: translateX(-50%) translateY(0); }
-    .toast.error { border-color: var(--bad); }
-
-    /* ── Error Banner ── */
-    .error-banner {
-      background: var(--bad-bg); border: 1px solid rgba(240,91,91,.3);
-      border-radius: 12px; padding: 12px 16px; margin-bottom: 20px;
-      display: flex; align-items: center; gap: 10px;
-      font-size: 13px; color: var(--bad);
-    }
+    .error-banner { background: var(--bad-bg); border: 1px solid rgba(240,91,91,.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--bad); }
     .error-banner svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-    /* ── Responsive ── */
-    @media (max-width: 700px) {
-      header { padding: 0 16px; }
-      main { padding: 20px 16px 80px; }
-      .services-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 9px; }
-      .nav-center { display: none; }
-      .feed-filters { flex-wrap: wrap; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-    }
+    @media (max-width: 700px) { header { padding: 0 16px; } main { padding: 20px 16px 80px; } .services-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 9px; } .nav-center { display: none; } .feed-filters { flex-wrap: wrap; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
   </style>
 </head>
 <body>
   <header>
     <div class="nav">
       <div class="brand">
-        <div class="brand-icon">
-          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 2L14 13H2L8 2Z" fill="white"/>
-          </svg>
-        </div>
+        <div class="brand-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2Z" fill="white"/></svg></div>
         ServicePulse
       </div>
       <div class="nav-center">
-        <button class="nav-btn active" onclick="scrollToSection('services')">All Services</button>
-        <button class="nav-btn" onclick="scrollToSection('feed')">Live Incidents</button>
+        <button class="nav-btn active" onclick="scrollTo('services')">All Services</button>
+        <button class="nav-btn" onclick="scrollTo('feed')">Live Incidents</button>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
         <span class="nav-meta" id="updated">—</span>
         <button class="refresh-btn" id="refreshBtn" onclick="refresh()">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M13.5 8a5.5 5.5 0 1 1-1.3-3.5"/>
-            <path d="M12 1v4h-4"/>
+            <path d="M13.5 8a5.5 5.5 0 1 1-1.3-3.5"/><path d="M12 1v4h-4"/>
           </svg>
           Refresh
         </button>
@@ -355,72 +236,40 @@
   </header>
 
   <main>
-    <!-- Stats -->
     <div class="stats-bar" id="statsBar">
-      <div class="stat-pill">
-        <span class="dot" style="background:var(--ok)"></span>
-        <span class="val" id="statUp">—</span>
-        <span class="lbl">Operational</span>
-      </div>
-      <div class="stat-pill">
-        <span class="dot" style="background:var(--warn)"></span>
-        <span class="val" id="statDegraded">—</span>
-        <span class="lbl">Degraded</span>
-      </div>
-      <div class="stat-pill">
-        <span class="dot" style="background:var(--bad)"></span>
-        <span class="val" id="statDown">—</span>
-        <span class="lbl">Down</span>
-      </div>
-      <div class="stat-pill">
-        <span class="dot" style="background:var(--muted)"></span>
-        <span class="val" id="statUnknown">—</span>
-        <span class="lbl">Unknown</span>
-      </div>
+      <div class="stat-pill"><span class="dot" style="background:var(--ok)"></span><span class="val" id="statUp">—</span><span class="lbl">Operational</span></div>
+      <div class="stat-pill"><span class="dot" style="background:var(--warn)"></span><span class="val" id="statDegraded">—</span><span class="lbl">Degraded</span></div>
+      <div class="stat-pill"><span class="dot" style="background:var(--bad)"></span><span class="val" id="statDown">—</span><span class="lbl">Down</span></div>
+      <div class="stat-pill"><span class="dot" style="background:var(--muted)"></span><span class="val" id="statUnknown">—</span><span class="lbl">Unknown</span></div>
       <div class="stat-pill" style="margin-left:auto;">
-        <span class="val" id="statSignals">—</span>
-        <span class="lbl">Signals</span>
+        <span class="val" id="statSignals">—</span><span class="lbl">Signals</span>
         <span class="src-breakdown" id="srcBreakdown"></span>
       </div>
     </div>
 
-    <!-- Search -->
     <div class="search-wrap">
-      <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
-        <circle cx="6.5" cy="6.5" r="4.5"/>
-        <path d="M10 10l3.5 3.5"/>
-      </svg>
+      <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l3.5 3.5"/></svg>
       <input class="search-input" id="searchInput" placeholder="Search services or incidents..." oninput="handleSearch(this.value)" />
     </div>
 
-    <!-- Error Banner -->
     <div class="error-banner" id="errorBanner" style="display:none;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M12 8v4m0 4h.01"/>
-      </svg>
-      <span id="errorMsg">Some data sources failed to load. Showing partial results.</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      <span id="errorMsg">Some sources failed. Showing partial results.</span>
     </div>
 
-    <!-- Source Legend -->
     <div class="source-legend">
       <div class="legend-item"><span class="legend-dot" style="background:#ff4500"></span>Reddit</div>
       <div class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>StatusPage.io</div>
       <div class="legend-item"><span class="legend-dot" style="background:var(--warn)"></span>DownDetector</div>
       <div class="legend-item"><span class="legend-dot" style="background:var(--muted)"></span>Health Check</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#1d9bf0"></span>Twitter/X</div>
     </div>
 
-    <!-- Service Cards Grid -->
     <div class="section-title">Services Status</div>
     <div class="services-grid" id="servicesGrid">
-      <div class="skeleton skeleton-card"></div>
-      <div class="skeleton skeleton-card"></div>
-      <div class="skeleton skeleton-card"></div>
-      <div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div>
     </div>
 
-    <!-- Incident Feed -->
     <div class="section-title" id="feedSection">Live Incidents</div>
     <div class="feed-header">
       <div class="feed-title-group">
@@ -435,10 +284,7 @@
     </div>
     <div class="incidents-list" id="incidentsList">
       <div class="empty-state" id="loadingState">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M12 6v6l4 2"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         <p>Fetching signals from all sources...</p>
       </div>
     </div>
@@ -447,17 +293,8 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // ── Constants ───────────────────────────────────────────────
-    const ALL_SERVICE_NAMES = [
-      'AWS', 'Google Cloud', 'Microsoft Azure', 'GitHub', 'GitLab',
-      'Vercel', 'Cloudflare', 'Slack', 'Microsoft Teams', 'Discord',
-      'Notion', 'Linear', 'Figma', 'Stripe', 'OpenAI',
-      'Anthropic', 'Reddit', 'X / Twitter', 'MongoDB', 'Supabase',
-      'Twilio', 'SendGrid', 'DeepSeek', 'Groq', 'Together AI',
-      'HuggingFace', 'Modal', 'Replicate', 'Runway', 'ElevenLabs',
-    ];
-
-    const SERVICE_IDS = {
+    // ── Service Definitions ───────────────────────────────────────
+    const SERVICE_MAP = {
       'AWS': 'aws', 'Google Cloud': 'google-cloud', 'Microsoft Azure': 'azure',
       'GitHub': 'github', 'GitLab': 'gitlab', 'Vercel': 'vercel',
       'Cloudflare': 'cloudflare', 'Slack': 'slack', 'Microsoft Teams': 'teams',
@@ -470,13 +307,15 @@
       'Modal': 'modal', 'Replicate': 'replicate', 'Runway': 'runway',
       'ElevenLabs': 'elevenlabs',
     };
+    const ALL_SERVICE_NAMES = Object.keys(SERVICE_MAP);
 
-    // ── State ──────────────────────────────────────────────────
-    let apiData = null;
+    // ── State ─────────────────────────────────────────────────────
+    let allIncidents = [];
+    let serviceStatuses = {};
     let currentFilter = 'all';
     let searchQuery = '';
 
-    // ── Utilities ────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────
     const $ = id => document.getElementById(id);
     const esc = v => String(v??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const timeAgo = ts => {
@@ -487,209 +326,328 @@
       if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
       return `${Math.floor(diff/86400)}d ago`;
     };
-    const toast = (msg, isError = false) => {
-      const el = $('toast');
-      el.textContent = msg;
-      el.classList.toggle('error', isError);
-      el.classList.add('show');
+    const toast = (msg) => {
+      const el = $('toast'); el.textContent = msg; el.classList.add('show');
       setTimeout(() => el.classList.remove('show'), 4000);
     };
 
-    // ── Navigation ──────────────────────────────────────────────
-    function scrollToSection(id) {
-      const el = id === 'feed'
-        ? $('feedSection')
-        : document.querySelector('.section-title');
+    function scrollTo(id) {
+      const el = id === 'feed' ? $('feedSection') : document.querySelector('.section-title');
       el?.scrollIntoView({ behavior: 'smooth' });
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      if (id === 'feed') document.querySelectorAll('.nav-btn')[1]?.classList.add('active');
-      else document.querySelectorAll('.nav-btn')[0]?.classList.add('active');
+      document.querySelectorAll('.nav-btn')[id === 'feed' ? 1 : 0]?.classList.add('active');
     }
 
-    // ── Stats ────────────────────────────────────────────────────
-    function renderStats(data) {
-      const stats = data.stats || {};
-      const summary = data.summary || {};
-      $('statUp').textContent = stats.up ?? '—';
-      $('statDegraded').textContent = stats.degraded ?? '—';
-      $('statDown').textContent = stats.down ?? '—';
-      $('statUnknown').textContent = stats.unknown ?? '—';
-      $('statSignals').textContent = summary.total ?? '—';
-
-      // Source breakdown
-      const srcs = summary.bySource || {};
-      const breakdown = Object.entries(srcs).map(([k, v]) =>
-        `<span class="src-chip">${esc(k)}: ${v}</span>`
-      ).join('');
-      $('srcBreakdown').innerHTML = breakdown;
-    }
-
-    // ── Service Cards ────────────────────────────────────────────
-    function renderServices(data, filter = '') {
-      const grid = $('servicesGrid');
-      const statuses = data.statuses || {};
-      const q = filter.toLowerCase().trim();
-
-      const services = ALL_SERVICE_NAMES
-        .map(name => {
-          const id = SERVICE_IDS[name] || name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-          return { id, name, ...statuses[id] };
-        })
-        .filter(s => {
-          if (!q) return true;
-          return s.name.toLowerCase().includes(q) ||
-            (s.incidentTitle || '').toLowerCase().includes(q);
-        })
-        .sort((a, b) => {
-          const order = { down: 0, degraded: 1, unknown: 2, up: 3 };
-          return (order[a.status] ?? 3) - (order[b.status] ?? 3);
-        });
-
-      if (!services.length) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:40px"><p>No services match "${esc(filter)}"</p></div>`;
-        return;
+    // ── Source 1: StatusPage.io ─────────────────────────────────
+    async function fetchStatusPageSignals() {
+      const pages = [
+        { name: 'OpenAI',       url: 'https://status.openai.com/api/v2/summary.json' },
+        { name: 'Anthropic',    url: 'https://status.anthropic.com/api/v2/summary.json' },
+        { name: 'Discord',      url: 'https://discord.statuspage.io/api/v2/summary.json' },
+        { name: 'Supabase',     url: 'https://status.supabase.com/api/v2/summary.json' },
+        { name: 'DeepSeek',     url: 'https://status.deepseek.com/api/v2/summary.json' },
+        { name: 'Groq',         url: 'https://status.groq.com/api/v2/summary.json' },
+        { name: 'Modal',        url: 'https://status.modal.com/api/v2/summary.json' },
+        { name: 'ElevenLabs',   url: 'https://status.elevenlabs.io/api/v2/summary.json' },
+        { name: 'Together AI',  url: 'https://status.together.ai/api/v2/summary.json' },
+        { name: 'Runway',       url: 'https://status.runwayml.com/api/v2/summary.json' },
+        { name: 'Replicate',    url: 'https://replicate.statuspage.io/api/v2/summary.json' },
+        { name: 'Cloudflare',   url: 'https://www.cloudflarestatus.com/api/v2/summary.json' },
+        { name: 'GitLab',       url: 'https://status.gitlab.com/api/v2/summary.json' },
+      ];
+      const results = [];
+      for (const pg of pages) {
+        try {
+          const r = await fetch(pg.url, { signal: AbortSignal.timeout(6000) });
+          if (!r.ok) continue;
+          const d = await r.json();
+          const comps = d.components || [];
+          const incs = d.incidents || [];
+          const nonOp = comps.filter(c => c.status !== 'operational' && c.status !== 'under_maintenance');
+          if (!nonOp.length && !incs.length) continue;
+          const latest = incs[0];
+          const isDown = nonOp.some(c => ['major_outage','partial_outage'].includes(c.status));
+          results.push({
+            service: pg.name, serviceId: SERVICE_MAP[pg.name] || pg.name.toLowerCase().replace(/[^a-z0-9]/g,'-'),
+            title: latest?.name || (isDown ? `Major outage on ${nonOp.map(c=>c.name).join(', ') || pg.name}` : `Degraded: ${nonOp.map(c=>c.name).join(', ') || pg.name}`),
+            time: latest?.created_at || new Date().toISOString(), source: 'statuspage',
+            type: isDown ? 'down' : 'degraded', severity: isDown ? 2 : 1,
+            affected: nonOp.map(c=>c.name).join(', '),
+            incidentUrl: latest?.shortlink || null, pageUrl: pg.url.replace('/api/v2/summary.json',''),
+          });
+        } catch { /* skip */ }
       }
+      return results;
+    }
 
-      grid.innerHTML = services.map(svc => {
-        const status = svc.status || 'unknown';
-        const sources = svc.sources || [];
-        const srcTags = [...new Set(sources)].slice(0, 3).map(src =>
-          `<span class="src-tag">${esc(src)}</span>`
-        ).join('');
+    // ── Source 2: Reddit ─────────────────────────────────────────
+    async function fetchRedditSignals() {
+      const subs = ['sysadmin','aws','github'];
+      const queries = ['service down','outage right now','not working'];
+      const svcKW = [
+        { kw: /aws|amazon web|ec2|s3|lambda/i, name: 'AWS' },
+        { kw: /github|git ?hub|gh actions/i, name: 'GitHub' },
+        { kw: /vercel/i, name: 'Vercel' },
+        { kw: /cloudflare|cf-/i, name: 'Cloudflare' },
+        { kw: /slack\.com|slack workspace/i, name: 'Slack' },
+        { kw: /discordapp|discord\.com/i, name: 'Discord' },
+        { kw: /notion\.so/i, name: 'Notion' },
+        { kw: /openai|gpt|chatgpt|api\.openai/i, name: 'OpenAI' },
+        { kw: /anthropic|claude\b/i, name: 'Anthropic' },
+        { kw: /deepseek/i, name: 'DeepSeek' },
+        { kw: /groq\.com|groq/i, name: 'Groq' },
+        { kw: /together\.ai/i, name: 'Together AI' },
+        { kw: /huggingface|hf\.co/i, name: 'HuggingFace' },
+        { kw: /modal\.com/i, name: 'Modal' },
+        { kw: /replicate\.com/i, name: 'Replicate' },
+        { kw: /stripe\.com/i, name: 'Stripe' },
+        { kw: /twilio/i, name: 'Twilio' },
+        { kw: /supabase/i, name: 'Supabase' },
+        { kw: /figma\.com/i, name: 'Figma' },
+        { kw: /reddit\.com|r\//i, name: 'Reddit' },
+        { kw: /twitter\.com|x\.com/i, name: 'X / Twitter' },
+        { kw: /microsoft teams|teams\.microsoft/i, name: 'Microsoft Teams' },
+        { kw: /google cloud|gcp/i, name: 'Google Cloud' },
+        { kw: /azure|microsoft azure/i, name: 'Microsoft Azure' },
+        { kw: /gitlab\.com/i, name: 'GitLab' },
+        { kw: /mongodb|mongo ?db|atlas/i, name: 'MongoDB' },
+        { kw: /linear\.app/i, name: 'Linear' },
+        { kw: /elevenlabs/i, name: 'ElevenLabs' },
+        { kw: /runway/i, name: 'Runway' },
+      ];
 
-        return `
-          <div class="service-card ${esc(status)}">
-            <div class="service-header">
-              <span class="service-name">${esc(svc.name)}</span>
-              <span class="service-dot"></span>
-            </div>
-            <span class="service-badge">${status === 'up' ? 'Operational' : status === 'degraded' ? 'Degraded' : status === 'down' ? 'Down' : 'Unknown'}</span>
-            ${srcTags ? `<div class="service-sources">${srcTags}</div>` : ''}
-            ${svc.lastChecked ? `<div class="service-meta">Checked ${timeAgo(svc.lastChecked)}</div>` : ''}
-            ${svc.incidentTitle ? `<div class="service-incident">${esc(svc.incidentTitle)}</div>` : ''}
-          </div>`;
+      const incidents = [];
+      const seen = new Set();
+      const hourAgo = Date.now() - 3600000;
+
+      for (const sub of subs) {
+        for (const query of queries) {
+          try {
+            const url = `https://www.reddit.com/r/${sub}/search.json?q=${encodeURIComponent(query)}&sort=new&restrict_sr=1&limit=6&t=hour`;
+            const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+            if (!r.ok) continue;
+            const d = await r.json();
+            for (const { data: post } of (d.data?.children || [])) {
+              const postTime = (post?.created_utc || 0) * 1000;
+              if (postTime < hourAgo) continue;
+              const text = ((post?.title || '') + ' ' + (post?.selftext || '')).toLowerCase();
+              for (const { kw, name } of svcKW) {
+                if (!kw.test(text)) continue;
+                const key = (post?.title || '').substring(0, 55) + name;
+                if (seen.has(key)) break;
+                seen.add(key);
+                const isMajor = /completely down|#outage|service is dead/i.test(post?.title || '');
+                incidents.push({
+                  service: name, serviceId: SERVICE_MAP[name] || name.toLowerCase().replace(/[^a-z0-9]/g,'-'),
+                  title: (post?.title || '').trim(), time: new Date(postTime).toISOString(),
+                  source: 'reddit', redditUrl: `https://reddit.com${post?.permalink || ''}`,
+                  redditSub: `r/${sub}`, score: post?.score || 0, comments: post?.num_comments || 0,
+                  type: isMajor ? 'down' : 'degraded', severity: isMajor ? 2 : 1,
+                });
+                break;
+              }
+            }
+          } catch { /* skip */ }
+        }
+      }
+      return incidents;
+    }
+
+    // ── Source 3: DownDetector ───────────────────────────────────
+    async function fetchDownDetectorSignals() {
+      const pages = {
+        'AWS': 'amazon-web-services-aws', 'GitHub': 'github', 'Slack': 'slack',
+        'Discord': 'discord', 'Microsoft Teams': 'microsoft-teams', 'Notion': 'notion',
+        'Stripe': 'stripe', 'OpenAI': 'openai-chatgpt', 'Vercel': 'vercel',
+        'Cloudflare': 'cloudflare', 'MongoDB': 'mongodb', 'Supabase': 'supabase',
+        'Google Cloud': 'google-cloud', 'Microsoft Azure': 'microsoft-azure', 'Reddit': 'reddit',
+        'X / Twitter': 'twitter',
+      };
+      const results = [];
+      const seen = new Set();
+
+      for (const [name, path] of Object.entries(pages)) {
+        try {
+          const r = await fetch(`https://downdetector.com/site/${path}/`, { signal: AbortSignal.timeout(7000) });
+          if (!r.ok) continue;
+          const text = await r.text();
+          const pMatch = text.match(/(\d[\d,]+)\s+(?:people are|users are)\s+(?:currently experiencing|having)\s+(?:problems|issues)/i);
+          const rMatch = text.match(/(\d+)\s+reports?\s+(?:in the last|within)\s+(\d+)\s+(?:minutes|hours?)/i);
+          const count = pMatch ? parseInt(pMatch[1].replace(/,/g,'')) : 0;
+          const recent = rMatch ? parseInt(rMatch[1]) : 0;
+          if (count < 20 && recent < 10) continue;
+          const key = name + '-dd';
+          if (seen.has(key)) continue;
+          seen.add(key);
+          results.push({
+            service: name, serviceId: SERVICE_MAP[name] || name.toLowerCase().replace(/[^a-z0-9]/g,'-'),
+            title: count > 50 ? `Major outage — ${count.toLocaleString()}+ users affected on ${name}` : `${count.toLocaleString() || recent}+ recent reports for ${name}`,
+            time: new Date().toISOString(), source: 'downdetector',
+            affectedCount: count || recent, pageUrl: `https://downdetector.com/site/${path}/`,
+            type: count > 50 ? 'down' : 'degraded', severity: count > 50 ? 2 : 1,
+          });
+        } catch { /* skip */ }
+      }
+      return results;
+    }
+
+    // ── Source 4: Health checks ──────────────────────────────────
+    async function fetchHealthSignals() {
+      const targets = [
+        { name: 'GitHub',     url: 'https://github.com/' },
+        { name: 'Vercel',     url: 'https://vercel.com/' },
+        { name: 'Reddit',     url: 'https://reddit.com/' },
+        { name: 'DeepSeek',   url: 'https://api.deepseek.com/' },
+        { name: 'Groq',       url: 'https://api.groq.com/' },
+        { name: 'Cloudflare', url: 'https://cloudflare.com/' },
+      ];
+      const results = [];
+      for (const t of targets) {
+        try {
+          const start = Date.now();
+          const r = await fetch(t.url, { signal: AbortSignal.timeout(5000), redirect: 'follow' });
+          const ms = Date.now() - start;
+          if (!r.ok) {
+            results.push({ service: t.name, serviceId: SERVICE_MAP[t.name] || t.name.toLowerCase().replace(/[^a-z0-9]/g,'-'), title: `HTTP ${r.status} — ${t.name} error`, time: new Date().toISOString(), source: 'healthcheck', type: r.status >= 500 ? 'down' : 'degraded', severity: r.status >= 500 ? 2 : 1 });
+          } else if (ms > 8000) {
+            results.push({ service: t.name, serviceId: SERVICE_MAP[t.name] || t.name.toLowerCase().replace(/[^a-z0-9]/g,'-'), title: `${t.name} slow: ${Math.round(ms/1000)}s response`, time: new Date().toISOString(), source: 'healthcheck', type: 'degraded', severity: 1 });
+          }
+        } catch (e) {
+          results.push({ service: t.name, serviceId: SERVICE_MAP[t.name] || t.name.toLowerCase().replace(/[^a-z0-9]/g,'-'), title: `${t.name} unreachable`, time: new Date().toISOString(), source: 'healthcheck', type: 'down', severity: 2 });
+        }
+      }
+      return results;
+    }
+
+    // ── Derive statuses ────────────────────────────────────────────
+    function deriveStatuses(incidents) {
+      const s = {};
+      for (const name of ALL_SERVICE_NAMES) {
+        const id = SERVICE_MAP[name];
+        s[id] = { service: name, status: 'unknown', lastChecked: null, sources: [], incidentTitle: null };
+      }
+      for (const inc of incidents) {
+        const sid = inc.serviceId;
+        if (!s[sid]) s[sid] = { service: inc.service, status: 'unknown', lastChecked: null, sources: [], incidentTitle: null };
+        const e = s[sid];
+        e.lastChecked = inc.time;
+        if (!e.sources.includes(inc.source)) e.sources.push(inc.source);
+        if (inc.type === 'down') { if (e.status !== 'down') { e.status = 'down'; e.incidentTitle = inc.title; } }
+        else if (inc.type === 'degraded' && e.status === 'unknown') { e.status = 'degraded'; e.incidentTitle = inc.title; }
+      }
+      return s;
+    }
+
+    // ── Stats ─────────────────────────────────────────────────────
+    function renderStats(incidents) {
+      const statuses = deriveStatuses(incidents);
+      serviceStatuses = statuses;
+      const stats = { up: 0, degraded: 0, down: 0, unknown: 0 };
+      for (const s of Object.values(statuses)) stats[s.status] = (stats[s.status] || 0) + 1;
+      $('statUp').textContent = stats.up;
+      $('statDegraded').textContent = stats.degraded;
+      $('statDown').textContent = stats.down;
+      $('statUnknown').textContent = stats.unknown;
+      $('statSignals').textContent = incidents.length;
+      const bySrc = incidents.reduce((a, s) => { a[s.source] = (a[s.source] || 0) + 1; return a; }, {});
+      $('srcBreakdown').innerHTML = Object.entries(bySrc).map(([k,v]) => `<span class="src-chip">${esc(k)}:${v}</span>`).join('');
+    }
+
+    // ── Services ──────────────────────────────────────────────────
+    function renderServices(incidents, filter = '') {
+      const grid = $('servicesGrid');
+      const statuses = serviceStatuses;
+      const q = filter.toLowerCase().trim();
+      const svcList = ALL_SERVICE_NAMES
+        .filter(n => !q || n.toLowerCase().includes(q) || (statuses[SERVICE_MAP[n]]?.incidentTitle || '').toLowerCase().includes(q))
+        .map(n => ({ id: SERVICE_MAP[n], ...statuses[SERVICE_MAP[n]] }))
+        .sort((a,b) => { const o = {down:0,degraded:1,unknown:2,up:3}; return (o[a.status]??3)-(o[b.status]??3); });
+
+      if (!svcList.length) { grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:40px"><p>No services match "${esc(filter)}"</p></div>`; return; }
+      grid.innerHTML = svcList.map(svc => {
+        const srcs = [...new Set(svc.sources||[])].slice(0,3).map(s => `<span class="src-tag">${esc(s)}</span>`).join('');
+        return `<div class="service-card ${esc(svc.status||'unknown')}">
+          <div class="service-header"><span class="service-name">${esc(svc.service||'')}</span><span class="service-dot"></span></div>
+          <span class="service-badge">${svc.status==='up'?'Operational':svc.status==='degraded'?'Degraded':svc.status==='down'?'Down':'Unknown'}</span>
+          ${srcs?`<div class="service-sources">${srcs}</div>`:''}
+          ${svc.lastChecked?`<div class="service-meta">Checked ${timeAgo(svc.lastChecked)}</div>`:''}
+          ${svc.incidentTitle?`<div class="service-incident">${esc(svc.incidentTitle)}</div>`:''}
+        </div>`;
       }).join('');
     }
 
     // ── Incidents ─────────────────────────────────────────────────
-    function sourceTag(source) {
-      const map = {
-        'reddit': { cls: 'reddit', label: 'Reddit' },
-        'statuspage': { cls: 'statuspage', label: 'StatusPage' },
-        'downdetector': { cls: 'downdetector', label: 'DownDetector' },
-        'healthcheck': { cls: 'healthcheck', label: 'Health Check' },
-        'twitter': { cls: 'twitter', label: 'X / Twitter' },
-      };
-      const s = map[source] || { cls: 'healthcheck', label: source };
-      return `<span class="source-tag ${esc(s.cls)}">${esc(s.label)}</span>`;
+    function srcTag(src) {
+      const m = { reddit:{cls:'reddit',lbl:'Reddit'}, statuspage:{cls:'statuspage',lbl:'StatusPage'}, downdetector:{cls:'downdetector',lbl:'DownDetector'}, healthcheck:{cls:'healthcheck',lbl:'Health Check'}, twitter:{cls:'twitter',lbl:'X/Twitter'} };
+      const s = m[src]||{cls:'healthcheck',lbl:src};
+      return `<span class="source-tag ${esc(s.cls)}">${esc(s.lbl)}</span>`;
     }
 
     function renderIncidents(incidents) {
       const list = $('incidentsList');
-      const filtered = incidents.filter(i => {
-        if (currentFilter === 'down') return i.type === 'down';
-        if (currentFilter === 'degraded') return i.type === 'degraded';
-        return true;
-      });
-
-      const q = searchQuery.toLowerCase();
-      const final = q
-        ? filtered.filter(i => i.service.toLowerCase().includes(q) || (i.title||'').toLowerCase().includes(q))
-        : filtered;
-
-      $('feedCount').textContent = `${final.length} / ${incidents.length}`;
-
-      if (!final.length) {
-        list.innerHTML = `
-          <div class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <p>${currentFilter === 'all' ? 'No active incidents detected. All services nominal.' : `No ${currentFilter} incidents.`}</p>
-          </div>`;
-        return;
-      }
-
-      list.innerHTML = final.map(inc => `
-        <div class="incident-card ${esc(inc.type || 'degraded')}">
-          <div class="incident-top">
-            <div class="incident-left">
-              <span class="incident-service">${esc(inc.service)}</span>
-              <span class="incident-type-chip">${inc.type === 'down' ? 'Outage' : 'Degraded'}</span>
-            </div>
-            <span class="incident-time">${timeAgo(inc.time)}</span>
-          </div>
-          <div class="incident-title">${esc(inc.title)}</div>
-          <div class="incident-sources">
-            ${sourceTag(inc.source)}
-            ${inc.redditUrl ? `<a class="incident-link" href="${esc(inc.redditUrl)}" target="_blank" rel="noopener">View source →</a>` : ''}
-            ${inc.incidentUrl ? `<a class="incident-link" href="${esc(inc.incidentUrl)}" target="_blank" rel="noopener">Incident →</a>` : ''}
-            ${inc.pageUrl ? `<a class="incident-link" href="${esc(inc.pageUrl)}" target="_blank" rel="noopener">Status page →</a>` : ''}
-          </div>
-          ${inc.affectedCount ? `<div class="incident-meta"><span class="incident-meta-item"><span>${inc.affectedCount.toLocaleString()}</span> users affected</span></div>` : ''}
-          ${inc.score !== undefined ? `<div class="incident-meta"><span class="incident-meta-item">Score: <span>${inc.score}</span></span><span class="incident-meta-item">Comments: <span>${inc.comments || 0}</span></span></div>` : ''}
-        </div>`).join('');
+      let filtered = currentFilter === 'all' ? incidents : incidents.filter(i => i.type === currentFilter);
+      if (searchQuery) { const q=searchQuery.toLowerCase(); filtered = filtered.filter(i => i.service.toLowerCase().includes(q) || (i.title||'').toLowerCase().includes(q)); }
+      $('feedCount').textContent = `${filtered.length} / ${incidents.length}`;
+      if (!filtered.length) { list.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p>${currentFilter==='all'?'No active incidents detected.':'No '+currentFilter+' incidents.'}</p></div>`; return; }
+      list.innerHTML = filtered.map(inc => `<div class="incident-card ${esc(inc.type||'degraded')}">
+        <div class="incident-top">
+          <div class="incident-left"><span class="incident-service">${esc(inc.service)}</span><span class="incident-type-chip">${inc.type==='down'?'Outage':'Degraded'}</span></div>
+          <span class="incident-time">${timeAgo(inc.time)}</span>
+        </div>
+        <div class="incident-title">${esc(inc.title||'')}</div>
+        <div class="incident-sources">
+          ${srcTag(inc.source)}
+          ${inc.redditUrl?`<a class="incident-link" href="${esc(inc.redditUrl)}" target="_blank" rel="noopener">View source →</a>`:''}
+          ${inc.incidentUrl?`<a class="incident-link" href="${esc(inc.incidentUrl)}" target="_blank" rel="noopener">Incident →</a>`:''}
+          ${inc.pageUrl?`<a class="incident-link" href="${esc(inc.pageUrl)}" target="_blank" rel="noopener">Status page →</a>`:''}
+        </div>
+        ${inc.affectedCount?`<div class="incident-meta"><span class="incident-meta-item"><span>${inc.affectedCount.toLocaleString()}</span> users affected</span></div>`:''}
+        ${inc.score!==undefined?`<div class="incident-meta"><span class="incident-meta-item">Score: <span>${inc.score}</span></span><span class="incident-meta-item">Comments: <span>${inc.comments||0}</span></span></div>`:''}
+      </div>`).join('');
     }
 
-    // ── Filter ───────────────────────────────────────────────────
+    // ── Filter / Search ───────────────────────────────────────────
     function setFilter(f) {
       currentFilter = f;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      document.querySelector(`.filter-btn.${esc(f)}, .filter-btn${f === 'all' ? '.all' : ''}`)?.classList.add('active');
-      if (apiData) renderIncidents(apiData.signals || []);
+      document.querySelector(`.filter-btn.${esc(f)}`)?.classList.add('active');
+      renderIncidents(allIncidents);
     }
+    function handleSearch(q) { searchQuery = q; renderServices(allIncidents, q); renderIncidents(allIncidents); }
 
-    function handleSearch(q) {
-      searchQuery = q;
-      if (apiData) {
-        renderServices(apiData, q);
-        renderIncidents(apiData.signals || []);
-      }
-    }
-
-    // ── Main Load ────────────────────────────────────────────────
+    // ── Main ─────────────────────────────────────────────────────
     async function load() {
       $('updated').textContent = 'Loading...';
       $('errorBanner').style.display = 'none';
+      const [sp, rd, dd, hc] = await Promise.allSettled([
+        fetchStatusPageSignals(), fetchRedditSignals(), fetchDownDetectorSignals(), fetchHealthSignals(),
+      ]);
+      const errors = [];
+      if (sp.status !== 'fulfilled') errors.push('StatusPage');
+      if (rd.status !== 'fulfilled') errors.push('Reddit');
+      if (dd.status !== 'fulfilled') errors.push('DownDetector');
+      if (hc.status !== 'fulfilled') errors.push('HealthCheck');
+      if (errors.length) { $('errorBanner').style.display = 'flex'; $('errorMsg').textContent = `${errors.join(', ')} unavailable. Showing partial data.`; }
 
-      try {
-        const r = await fetch('/api/signals', { cache: 'no-store' });
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        const data = await r.json();
-        apiData = data;
+      const all = [
+        ...(sp.value||[]), ...(rd.value||[]), ...(dd.value||[]), ...(hc.value||[]),
+      ];
+      const seen = new Set();
+      allIncidents = all.filter(inc => { const k = (inc.serviceId||'')+'|'+(inc.title||'').substring(0,50); if (seen.has(k)) return false; seen.add(k); return true; });
+      allIncidents.sort((a,b) => { if ((b.severity||1)!==(a.severity||1)) return (b.severity||1)-(a.severity||1); return new Date(b.time)-new Date(a.time); });
 
-        renderStats(data);
-        renderServices(data, searchQuery);
-        renderIncidents(data.signals || []);
-
-        const t = new Date(data.generatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        $('updated').textContent = `Updated ${t}`;
-      } catch(e) {
-        $('updated').textContent = 'Update failed';
-        $('errorBanner').style.display = 'flex';
-        $('errorMsg').textContent = `API error: ${e.message}. Showing cached view.`;
-        toast('Could not reach signal aggregator. Retrying...', true);
-      }
+      renderStats(allIncidents);
+      renderServices(allIncidents, searchQuery);
+      renderIncidents(allIncidents);
+      $('updated').textContent = `Updated ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
     }
 
-    function refresh() {
-      const btn = $('refreshBtn');
-      btn.classList.add('spinning');
-      load().finally(() => btn.classList.remove('spinning'));
-    }
+    function refresh() { const b=$('refreshBtn'); b.classList.add('spinning'); load().finally(()=>b.classList.remove('spinning')); }
 
-    // ── Init ─────────────────────────────────────────────────────
     load();
-    setInterval(refresh, 90000); // Auto-refresh every 1.5 min
+    setInterval(refresh, 90000);
 
-    // ── Service Worker ────────────────────────────────────────────
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(reg => console.log('[SW] registered', reg.scope))
-          .catch(err => console.warn('[SW] registration failed', err));
-      });
-    }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').then(r => console.log('[SW] registered',r.scope)).catch(e => console.warn('[SW]',e)); }); }
   </script>
 </body>
 </html>

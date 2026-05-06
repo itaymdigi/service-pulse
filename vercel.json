@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "service-pulse",
   "public": true,
   "headers": [
     {
@@ -23,8 +22,7 @@
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Referrer-Policy", "value": "no-referrer" },
-        { "key": "Cache-Control", "value": "no-store" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://status.blobcast.io https://www.reddit.com https://oauth.reddit.com https://api.reddit.com; base-uri 'none'; frame-ancestors 'none'" }
+        { "key": "Cache-Control", "value": "no-store" }
       ]
     }
   ]
