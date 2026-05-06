@@ -325,7 +325,35 @@
     .bottom-nav-btn.active { color: var(--accent); }
     .bottom-nav-btn:hover { color: var(--text); }
 
-    /* PWA Install banner */
+    /* PWA Update banner */
+    .update-banner {
+      background: var(--accent-dim);
+      border: 1px solid rgba(91,138,240,.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .update-banner.show { display: flex; }
+    .update-banner-icon { font-size: 18px; }
+    .update-banner-text { flex: 1; }
+    .update-banner-title { font-weight: 600; font-size: 13px; color: var(--accent); }
+    .update-banner-sub { font-size: 11px; color: var(--muted); }
+    .update-banner-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .update-banner-close { background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px; font-size: 16px; }
+
     .install-banner {
       display: none; position: fixed; bottom: 70px; left: 16px; right: 16px; z-index: 30;
       background: var(--panel2); border: 1px solid var(--accent);
@@ -427,8 +455,17 @@
     </div>
 
     <div class="error-banner" id="errorBanner" style="display:none;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-      <span id="errorMsg">Some sources failed. Showing partial results.</span>
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+      <span id="errorMsg"></span>
+    </div>
+    <div class="update-banner" id="updateBanner">
+      <span class="update-banner-icon">🔄</span>
+      <div class="update-banner-text">
+        <div class="update-banner-title">New version available</div>
+        <div class="update-banner-sub">Tap to reload with the latest version</div>
+      </div>
+      <button class="update-banner-btn" id="updateReload">Reload</button>
+      <button class="update-banner-close" id="updateBannerClose">✕</button>
     </div>
 
     <div class="source-legend">
@@ -1035,7 +1072,28 @@
     load();
     setInterval(refresh, 90000);
 
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').then(r => console.log('[SW] registered',r.scope)).catch(e => console.warn('[SW]',e)); }); }
+    if ('serviceWorker' in navigator) {
+      let lastSWUrl = null;
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(r => {
+          console.log('[SW] registered', r.scope);
+          lastSWUrl = r.active.scriptURL;
+        }).catch(e => console.warn('[SW]', e));
+      });
+
+      // Poll for SW updates every 30s
+      setInterval(async () => {
+        try {
+          const reg = await navigator.serviceWorker.getRegistration();
+          if (!reg) return;
+          const fresh = await reg.pushManager?.getSubscription?.() || null;
+          // Check if a new SW is waiting
+          if (reg.waiting && reg.waiting.scriptURL !== lastSWUrl) {
+            $('updateBanner').classList.add('show');
+          }
+        } catch {}
+      }, 30000);
+    }
 
     // PWA install
     let deferredPrompt = null;
@@ -1050,6 +1108,27 @@
       const { outcome } = await deferredPrompt.userChoice;
       deferredPrompt = null;
       $('installBanner').classList.remove('show');
+    });
+
+    // PWA auto-update: show "new version" banner when SW updates
+    let updatePrompt = null;
+    navigator.serviceWorker?.addEventListener('controllerchange', () => {
+      // New SW took control — show update banner
+      $('updateBanner').classList.add('show');
+    });
+    navigator.serviceWorker?.addEventListener('message', (e) => {
+      if (e.data?.type === 'UPDATE_AVAILABLE') {
+        updatePrompt = e.data;
+        $('updateBanner').classList.add('show');
+      }
+    });
+    $('updateReload')?.addEventListener('click', () => {
+      // Tell SW to skip waiting, then reload
+      navigator.serviceWorker.controller?.postMessage({ type: 'SKIP_WAITING' });
+      setTimeout(() => location.reload(true), 100);
+    });
+    $('updateBannerClose')?.addEventListener('click', () => {
+      $('updateBanner').classList.remove('show');
     });
   </script>
 </body>
