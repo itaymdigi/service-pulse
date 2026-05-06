@@ -869,10 +869,11 @@
 
     // ── Source 3: DownDetector ───────────────────────────────────
     async function fetchDownDetectorSignals() {
+      // Use /status/ paths — these are the correct DownDetector status page URLs
       const pages = {
         'AWS': 'amazon-web-services-aws', 'GitHub': 'github', 'Slack': 'slack',
         'Discord': 'discord', 'Microsoft Teams': 'microsoft-teams', 'Notion': 'notion',
-        'Stripe': 'stripe', 'OpenAI': 'openai-chatgpt', 'Vercel': 'vercel',
+        'Stripe': 'stripe', 'OpenAI': 'openai', 'Vercel': 'vercel',
         'Cloudflare': 'cloudflare', 'MongoDB': 'mongodb', 'Supabase': 'supabase',
         'Google Cloud': 'google-cloud', 'Microsoft Azure': 'microsoft-azure', 'Reddit': 'reddit',
         'X / Twitter': 'twitter',
@@ -882,7 +883,11 @@
 
       for (const [name, path] of Object.entries(pages)) {
         try {
-          const r = await fetch(`https://downdetector.com/site/${path}/`, { signal: AbortSignal.timeout(7000) });
+          // Try /status/ first, fall back to /site/ if needed
+          let r = await fetch(`https://downdetector.com/status/${path}/`, { signal: AbortSignal.timeout(7000) });
+          if (r.status === 404) {
+            r = await fetch(`https://downdetector.com/site/${path}/`, { signal: AbortSignal.timeout(7000) });
+          }
           if (!r.ok) continue;
           const text = await r.text();
           const pMatch = text.match(/(\d[\d,]+)\s+(?:people are|users are)\s+(?:currently experiencing|having)\s+(?:problems|issues)/i);
@@ -897,7 +902,7 @@
             service: name, serviceId: SERVICE_MAP[name] || name.toLowerCase().replace(/[^a-z0-9]/g,'-'),
             title: count > 50 ? `Major outage — ${count.toLocaleString()}+ users affected on ${name}` : `${count.toLocaleString() || recent}+ recent reports for ${name}`,
             time: new Date().toISOString(), source: 'downdetector',
-            affectedCount: count || recent, pageUrl: `https://downdetector.com/site/${path}/`,
+            affectedCount: count || recent, pageUrl: `https://downdetector.com/status/${path}/`,
             type: count > 50 ? 'down' : 'degraded', severity: count > 50 ? 2 : 1,
           });
         } catch { /* skip */ }
@@ -927,7 +932,9 @@
             results.push({ service: t.name, serviceId: SERVICE_MAP[t.name] || t.name.toLowerCase().replace(/[^a-z0-9]/g,'-'), title: `${t.name} slow: ${Math.round(ms/1000)}s response`, time: new Date().toISOString(), source: 'healthcheck', type: 'degraded', severity: 1 });
           }
         } catch (e) {
-          results.push({ service: t.name, serviceId: SERVICE_MAP[t.name] || t.name.toLowerCase().replace(/[^a-z0-9]/g,'-'), title: `${t.name} unreachable`, time: new Date().toISOString(), source: 'healthcheck', type: 'down', severity: 2 });
+          // Network failures (no route, DNS, timeout) don't mean the service is down
+          // — they could be our own connectivity issues. Skip healthcheck signals
+          // when fetch fails entirely. Only report when we CAN reach it and it errors.
         }
       }
       return results;
