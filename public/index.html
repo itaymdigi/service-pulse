@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ServicePulse — Outage Monitor</title>
-  <meta name="description" content="Real-time outage monitoring across major services, powered by Reddit signals and public status pages" />
+  <meta name="description" content="Real-time outage monitoring across major services, powered by Reddit, DownDetector, status pages and health checks" />
   <meta name="theme-color" content="#0c0e14" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -24,7 +24,7 @@
       --text: #f0f0f5;
       --muted: #6b7084;
       --accent: #5b8af0;
-      --accent2: #3d6fcc;
+      --accent-dim: rgba(91,138,240,.12);
       --ok: #2fd4a0;
       --ok-bg: rgba(47,212,160,.1);
       --warn: #f0a832;
@@ -46,11 +46,9 @@
     }
     body::before {
       content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
+      position: fixed; inset: 0; pointer-events: none;
       background-image:
-        linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
       background-size: 44px 44px;
       mask-image: linear-gradient(to bottom, black, transparent 80%);
@@ -60,7 +58,7 @@
     /* ── Header ── */
     header {
       position: sticky; top: 0; z-index: 10;
-      background: rgba(12,14,20,.82);
+      background: rgba(12,14,20,.85);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
       padding: 0 28px;
@@ -75,57 +73,87 @@
       width: 28px; height: 28px; border-radius: 8px;
       background: linear-gradient(135deg, var(--accent), #a78bfa);
       display: grid; place-items: center;
-      box-shadow: 0 0 20px rgba(91,138,240,.4);
+      box-shadow: 0 0 20px rgba(91,138,240,.35);
     }
     .brand-icon svg { width: 16px; height: 16px; }
     .nav-center { display: flex; gap: 4px; }
     .nav-btn {
       background: transparent; border: none; color: var(--muted);
-      font: 500 13px 'Geist', sans-serif;
-      padding: 6px 12px; border-radius: 8px; cursor: pointer;
-      transition: all .15s;
+      font: 500 13px Geist, sans-serif;
+      padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all .15s;
     }
     .nav-btn:hover { color: var(--text); background: var(--pill-bg); }
     .nav-btn.active { color: var(--text); background: var(--panel2); }
     .nav-meta { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--muted); }
     .refresh-btn {
       background: var(--panel2); border: 1px solid var(--border2);
-      color: var(--text); font: 500 13px 'Geist', sans-serif;
+      color: var(--text); font: 500 13px Geist, sans-serif;
       padding: 7px 14px; border-radius: 10px; cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
-      transition: all .15s;
+      display: flex; align-items: center; gap: 6px; transition: all .15s;
     }
     .refresh-btn:hover { background: var(--accent); border-color: var(--accent); }
-    .refresh-btn svg { width: 13px; height: 13px; transition: transform .4s; }
+    .refresh-btn svg { width: 13px; height: 13px; transition: transform .5s; }
     .refresh-btn.spinning svg { transform: rotate(360deg); }
 
     /* ── Layout ── */
-    main { max-width: 1300px; margin: 0 auto; padding: 28px 28px 60px; position: relative; z-index: 1; }
+    main { max-width: 1300px; margin: 0 auto; padding: 28px 28px 80px; position: relative; z-index: 1; }
 
-    /* ── Service Grid ── */
+    /* ── Stats Bar ── */
+    .stats-bar { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
+    .stat-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 10px; padding: 8px 14px; font-size: 13px;
+    }
+    .stat-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .stat-pill .val { font-weight: 700; font-family: 'Geist Mono', monospace; }
+    .stat-pill .lbl { color: var(--muted); }
+    .stat-pill .src-breakdown {
+      font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted);
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .src-chip {
+      background: var(--pill-bg); border: 1px solid var(--border);
+      border-radius: 5px; padding: 1px 6px;
+    }
+
+    /* ── Search ── */
+    .search-wrap { position: relative; margin-bottom: 20px; }
+    .search-input {
+      width: 100%; height: 44px;
+      background: var(--panel); border: 1px solid var(--border2);
+      border-radius: 12px; color: var(--text);
+      font: 500 14px Geist, sans-serif; padding: 0 14px 0 42px;
+      outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,138,240,.14); }
+    .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--muted); pointer-events: none; }
+
+    /* ── Section Title ── */
+    .section-title {
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--muted); margin-bottom: 14px;
+    }
+
+    /* ── Service Cards Grid ── */
     .services-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 28px;
+      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+      gap: 11px; margin-bottom: 32px;
     }
     .service-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px 16px 14px;
-      display: flex; flex-direction: column; gap: 10px;
-      transition: border-color .2s, transform .15s;
-      position: relative; overflow: hidden;
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px 15px 13px;
+      display: flex; flex-direction: column; gap: 8px;
+      transition: border-color .2s, transform .15s, box-shadow .2s;
+      position: relative; overflow: hidden; cursor: default;
     }
     .service-card::before {
-      content: "";
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      border-radius: 16px 16px 0 0;
-      opacity: 0;
-      transition: opacity .2s;
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      border-radius: 16px 16px 0 0; opacity: 0; transition: opacity .2s;
     }
-    .service-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+    .service-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
     .service-card:hover::before { opacity: 1; }
     .service-card.up::before { background: var(--ok); }
     .service-card.degraded::before { background: var(--warn); }
@@ -134,112 +162,134 @@
 
     .service-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .service-name { font-weight: 600; font-size: 14px; }
-    .service-status-dot {
+    .service-dot {
       width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-      box-shadow: 0 0 8px currentColor;
     }
-    .up .service-status-dot { background: var(--ok); color: var(--ok); }
-    .degraded .service-status-dot { background: var(--warn); color: var(--warn); }
-    .down .service-status-dot { background: var(--bad); color: var(--bad); box-shadow: 0 0 12px var(--bad); animation: pulse-dot 1.5s infinite; }
-    .unknown .service-status-dot { background: var(--muted); color: var(--muted); }
-    @keyframes pulse-dot {
+    .up .service-dot { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+    .degraded .service-dot { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+    .down .service-dot { background: var(--bad); box-shadow: 0 0 10px var(--bad); animation: pulse-down 1.4s infinite; }
+    .unknown .service-dot { background: var(--muted); }
+    @keyframes pulse-down {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: .5; transform: scale(.85); }
+      50% { opacity: .4; transform: scale(.8); }
     }
-
-    .service-meta { font-size: 12px; color: var(--muted); font-family: 'Geist Mono', monospace; }
-    .service-uptime { font-size: 11px; color: var(--muted); margin-top: auto; }
-    .up .service-uptime { color: var(--ok); }
-    .degraded .service-uptime { color: var(--warn); }
-    .down .service-uptime { color: var(--bad); }
 
     .service-badge {
       display: inline-flex; align-items: center; gap: 4px;
-      font-size: 11px; font-weight: 600; font-family: 'Geist Mono', monospace;
+      font-size: 10px; font-weight: 700; font-family: 'Geist Mono', monospace;
       padding: 3px 8px; border-radius: 6px;
-      text-transform: uppercase; letter-spacing: .04em;
+      text-transform: uppercase; letter-spacing: .05em;
     }
     .up .service-badge { background: var(--ok-bg); color: var(--ok); }
     .degraded .service-badge { background: var(--warn-bg); color: var(--warn); }
     .down .service-badge { background: var(--bad-bg); color: var(--bad); animation: badge-pulse .8s infinite alternate; }
     .unknown .service-badge { background: var(--pill-bg); color: var(--muted); }
-    @keyframes badge-pulse { from { opacity: 1; } to { opacity: .7; } }
+    @keyframes badge-pulse { from { opacity: 1; } to { opacity: .65; } }
 
-    /* ── Main Feed ── */
-    .feed-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .service-sources {
+      display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px;
+    }
+    .src-tag {
+      font-size: 10px; font-family: 'Geist Mono', monospace;
+      background: var(--pill-bg); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1px 5px; color: var(--muted);
+    }
+    .service-meta { font-size: 11px; color: var(--muted); font-family: 'Geist Mono', monospace; }
+    .service-incident { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ── Incident Feed ── */
+    .feed-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    .feed-title-group { display: flex; align-items: baseline; gap: 10px; }
     .feed-title { font-size: 15px; font-weight: 600; }
+    .feed-count { font-size: 12px; color: var(--muted); font-family: 'Geist Mono', monospace; }
     .feed-filters { display: flex; gap: 6px; }
     .filter-btn {
       background: var(--pill-bg); border: 1px solid var(--border);
-      color: var(--muted); font: 500 12px 'Geist', sans-serif;
-      padding: 5px 11px; border-radius: 8px; cursor: pointer;
-      transition: all .15s;
+      color: var(--muted); font: 500 12px Geist, sans-serif;
+      padding: 5px 11px; border-radius: 8px; cursor: pointer; transition: all .15s;
     }
     .filter-btn:hover, .filter-btn.active { color: var(--text); background: var(--panel2); border-color: var(--border2); }
-    .filter-btn.active.down-filter { color: var(--bad); border-color: var(--bad); background: var(--bad-bg); }
-    .filter-btn.active.all-filter { color: var(--accent); border-color: var(--accent); background: rgba(91,138,240,.1); }
+    .filter-btn.active.down { color: var(--bad); border-color: var(--bad); background: var(--bad-bg); }
+    .filter-btn.active.all { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+    .filter-btn.active.degraded { color: var(--warn); border-color: var(--warn); background: var(--warn-bg); }
 
     .incidents-list { display: flex; flex-direction: column; gap: 10px; }
     .incident-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px 18px;
-      transition: border-color .2s;
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 14px; padding: 15px 17px;
+      transition: border-color .2s, box-shadow .2s;
       position: relative; overflow: hidden;
     }
+    .incident-card:hover { border-color: var(--border2); box-shadow: 0 4px 16px rgba(0,0,0,.25); }
     .incident-card::before {
-      content: "";
-      position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
       border-radius: 14px 0 0 14px;
     }
-    .incident-card.down-incident::before { background: var(--bad); }
-    .incident-card.degraded-incident::before { background: var(--warn); }
-    .incident-card.update-incident::before { background: var(--accent); }
-    .incident-card.down-incident { border-color: rgba(240,91,91,.25); }
-    .incident-card:hover { border-color: var(--border2); }
+    .incident-card.down::before { background: var(--bad); }
+    .incident-card.degraded::before { background: var(--warn); }
+    .incident-card.down { border-color: rgba(240,91,91,.22); }
+    .incident-card.degraded { border-color: rgba(240,168,50,.18); }
 
-    .incident-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .incident-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+    .incident-left { display: flex; align-items: center; gap: 8px; }
     .incident-service { font-weight: 700; font-size: 14px; }
-    .incident-time {
-      font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted);
-      white-space: nowrap;
+    .incident-time { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); white-space: nowrap; }
+    .incident-type-chip {
+      font-size: 10px; font-weight: 700; font-family: 'Geist Mono', monospace;
+      padding: 2px 7px; border-radius: 5px; text-transform: uppercase; letter-spacing: .04em;
     }
-    .incident-title { font-size: 13px; color: var(--text); line-height: 1.5; margin-bottom: 10px; }
-    .incident-source { display: flex; align-items: center; gap: 6px; }
+    .incident-card.down .incident-type-chip { background: var(--bad-bg); color: var(--bad); }
+    .incident-card.degraded .incident-type-chip { background: var(--warn-bg); color: var(--warn); }
+
+    .incident-title { font-size: 13px; color: var(--text); line-height: 1.55; margin-bottom: 10px; }
+    .incident-sources { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .source-tag {
       display: inline-flex; align-items: center; gap: 4px;
-      background: var(--pill-bg); border: 1px solid var(--border);
-      color: var(--muted); font-size: 11px; font-weight: 500;
-      padding: 3px 8px; border-radius: 6px;
+      font-size: 11px; font-weight: 600;
+      padding: 3px 9px; border-radius: 6px;
     }
-    .source-tag.reddit { color: #ff4500; border-color: rgba(255,69,0,.3); background: rgba(255,69,0,.08); }
-    .source-tag.status { color: var(--accent); border-color: rgba(91,138,240,.3); background: rgba(91,138,240,.08); }
-    .source-tag.downdetector { color: var(--warn); border-color: rgba(240,168,50,.3); background: rgba(240,168,50,.08); }
-    .reddit-link {
+    .source-tag.reddit { background: rgba(255,69,0,.1); border: 1px solid rgba(255,69,0,.3); color: #ff4500; }
+    .source-tag.statuspage { background: var(--accent-dim); border: 1px solid rgba(91,138,240,.3); color: var(--accent); }
+    .source-tag.downdetector { background: var(--warn-bg); border: 1px solid rgba(240,168,50,.3); color: var(--warn); }
+    .source-tag.healthcheck { background: var(--pill-bg); border: 1px solid var(--border); color: var(--muted); }
+    .source-tag.twitter { background: rgba(29,155,240,.1); border: 1px solid rgba(29,155,240,.3); color: #1d9bf0; }
+
+    .incident-link {
       color: var(--muted); font-size: 11px; text-decoration: none;
-      display: flex; align-items: center; gap: 4px;
-      transition: color .15s;
+      display: inline-flex; align-items: center; gap: 4px; transition: color .15s;
     }
-    .reddit-link:hover { color: #ff4500; }
-    .reddit-link svg { width: 12px; height: 12px; }
+    .incident-link:hover { color: var(--text); }
+    .incident-link svg { width: 11px; height: 11px; }
+
+    .incident-meta {
+      display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap;
+    }
+    .incident-meta-item {
+      font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted);
+    }
+    .incident-meta-item span { color: var(--text); font-weight: 500; }
+
+    /* ── Source legend ── */
+    .source-legend {
+      display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+      padding: 12px 16px; background: var(--panel);
+      border: 1px solid var(--border); border-radius: 12px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 
     /* ── Empty / Loading States ── */
-    .empty-state {
-      text-align: center; padding: 60px 20px;
-      color: var(--muted);
-    }
-    .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: .4; }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: .35; }
     .empty-state p { font-size: 14px; }
 
     .skeleton {
       background: linear-gradient(90deg, var(--panel) 25%, var(--panel2) 50%, var(--panel) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 14px;
+      background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 14px;
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .skeleton-card { height: 110px; }
+    .skeleton-card { height: 108px; }
+    .skeleton-row { height: 88px; }
 
     /* ── Toast ── */
     .toast {
@@ -252,54 +302,27 @@
       z-index: 100; white-space: nowrap;
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { border-color: var(--bad); }
 
-    /* ── Search ── */
-    .search-wrap { position: relative; margin-bottom: 20px; }
-    .search-input {
-      width: 100%; height: 44px;
-      background: var(--panel); border: 1px solid var(--border2);
-      border-radius: 12px; color: var(--text);
-      font: 500 14px 'Geist', sans-serif; padding: 0 14px 0 42px;
-      outline: none; transition: border-color .15s;
+    /* ── Error Banner ── */
+    .error-banner {
+      background: var(--bad-bg); border: 1px solid rgba(240,91,91,.3);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: var(--bad);
     }
-    .search-input::placeholder { color: var(--muted); }
-    .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,138,240,.15); }
-    .search-icon {
-      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-      width: 16px; height: 16px; color: var(--muted); pointer-events: none;
-    }
-
-    /* ── Stats Bar ── */
-    .stats-bar {
-      display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
-    }
-    .stat-pill {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--panel); border: 1px solid var(--border);
-      border-radius: 10px; padding: 8px 14px;
-      font-size: 13px;
-    }
-    .stat-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
-    .stat-pill .val { font-weight: 700; font-family: 'Geist Mono', monospace; }
-    .stat-pill .lbl { color: var(--muted); }
-
-    /* ── Section Title ── */
-    .section-title {
-      font-size: 12px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .08em; color: var(--muted);
-      margin-bottom: 14px;
-    }
+    .error-banner svg { width: 16px; height: 16px; flex-shrink: 0; }
 
     /* ── Responsive ── */
     @media (max-width: 700px) {
-      .nav { padding: 0 16px; }
-      main { padding: 20px 16px 60px; }
-      .services-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+      header { padding: 0 16px; }
+      main { padding: 20px 16px 80px; }
+      .services-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 9px; }
       .nav-center { display: none; }
       .feed-filters { flex-wrap: wrap; }
     }
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
   </style>
 </head>
@@ -315,12 +338,12 @@
         ServicePulse
       </div>
       <div class="nav-center">
-        <button class="nav-btn active" data-view="all">All Services</button>
-        <button class="nav-btn" data-view="feed">Live Feed</button>
+        <button class="nav-btn active" onclick="scrollToSection('services')">All Services</button>
+        <button class="nav-btn" onclick="scrollToSection('feed')">Live Incidents</button>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
         <span class="nav-meta" id="updated">—</span>
-        <button class="refresh-btn" onclick="refresh()">
+        <button class="refresh-btn" id="refreshBtn" onclick="refresh()">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M13.5 8a5.5 5.5 0 1 1-1.3-3.5"/>
             <path d="M12 1v4h-4"/>
@@ -350,9 +373,14 @@
         <span class="lbl">Down</span>
       </div>
       <div class="stat-pill">
-        <span class="dot" style="background:var(--accent)"></span>
-        <span class="val" id="statIncidents">—</span>
-        <span class="lbl">Active Incidents</span>
+        <span class="dot" style="background:var(--muted)"></span>
+        <span class="val" id="statUnknown">—</span>
+        <span class="lbl">Unknown</span>
+      </div>
+      <div class="stat-pill" style="margin-left:auto;">
+        <span class="val" id="statSignals">—</span>
+        <span class="lbl">Signals</span>
+        <span class="src-breakdown" id="srcBreakdown"></span>
       </div>
     </div>
 
@@ -362,11 +390,29 @@
         <circle cx="6.5" cy="6.5" r="4.5"/>
         <path d="M10 10l3.5 3.5"/>
       </svg>
-      <input class="search-input" id="searchInput" placeholder="Search services, incidents..." oninput="handleSearch(this.value)" />
+      <input class="search-input" id="searchInput" placeholder="Search services or incidents..." oninput="handleSearch(this.value)" />
+    </div>
+
+    <!-- Error Banner -->
+    <div class="error-banner" id="errorBanner" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 8v4m0 4h.01"/>
+      </svg>
+      <span id="errorMsg">Some data sources failed to load. Showing partial results.</span>
+    </div>
+
+    <!-- Source Legend -->
+    <div class="source-legend">
+      <div class="legend-item"><span class="legend-dot" style="background:#ff4500"></span>Reddit</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>StatusPage.io</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--warn)"></span>DownDetector</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--muted)"></span>Health Check</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#1d9bf0"></span>Twitter/X</div>
     </div>
 
     <!-- Service Cards Grid -->
-    <div class="section-title">Services</div>
+    <div class="section-title">Services Status</div>
     <div class="services-grid" id="servicesGrid">
       <div class="skeleton skeleton-card"></div>
       <div class="skeleton skeleton-card"></div>
@@ -375,13 +421,16 @@
     </div>
 
     <!-- Incident Feed -->
-    <div class="section-title" style="margin-top:28px;">Live Incidents</div>
+    <div class="section-title" id="feedSection">Live Incidents</div>
     <div class="feed-header">
-      <div class="feed-title" id="feedTitle">Recent reports</div>
+      <div class="feed-title-group">
+        <div class="feed-title" id="feedTitle">Recent reports</div>
+        <div class="feed-count" id="feedCount"></div>
+      </div>
       <div class="feed-filters">
-        <button class="filter-btn all-filter active" onclick="setFilter('all')">All</button>
-        <button class="filter-btn down-filter" onclick="setFilter('down')">Outages</button>
-        <button class="filter-btn" onclick="setFilter('degraded')">Degraded</button>
+        <button class="filter-btn all active" onclick="setFilter('all')">All</button>
+        <button class="filter-btn down" onclick="setFilter('down')">Outages</button>
+        <button class="filter-btn degraded" onclick="setFilter('degraded')">Degraded</button>
       </div>
     </div>
     <div class="incidents-list" id="incidentsList">
@@ -390,7 +439,7 @@
           <circle cx="12" cy="12" r="10"/>
           <path d="M12 6v6l4 2"/>
         </svg>
-        <p>Loading service status...</p>
+        <p>Fetching signals from all sources...</p>
       </div>
     </div>
   </main>
@@ -398,353 +447,242 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // ── Config ──────────────────────────────────────────────────
-    const SERVICES = [
-      { id: 'aws', name: 'AWS', category: 'cloud' },
-      { id: 'google-cloud', name: 'Google Cloud', category: 'cloud' },
-      { id: 'azure', name: 'Microsoft Azure', category: 'cloud' },
-      { id: 'github', name: 'GitHub', category: 'devtools' },
-      { id: 'gitlab', name: 'GitLab', category: 'devtools' },
-      { id: 'vercel', name: 'Vercel', category: 'infra' },
-      { id: 'cloudflare', name: 'Cloudflare', category: 'infra' },
-      { id: 'slack', name: 'Slack', category: 'collaboration' },
-      { id: 'teams', name: 'Microsoft Teams', category: 'collaboration' },
-      { id: 'discord', name: 'Discord', category: 'collaboration' },
-      { id: 'notion', name: 'Notion', category: 'productivity' },
-      { id: 'linear', name: 'Linear', category: 'productivity' },
-      { id: 'figma', name: 'Figma', category: 'design' },
-      { id: 'stripe', name: 'Stripe', category: 'payments' },
-      { id: 'openai', name: 'OpenAI', category: 'ai' },
-      { id: 'anthropic', name: 'Anthropic', category: 'ai' },
-      { id: 'reddit', name: 'Reddit', category: 'social' },
-      { id: 'twitter', name: 'X / Twitter', category: 'social' },
-      { id: 'mongodb', name: 'MongoDB', category: 'database' },
-      { id: 'supabase', name: 'Supabase', category: 'database' },
-      { id: 'twilio', name: 'Twilio', category: 'communications' },
-      { id: 'sendgrid', name: 'SendGrid', category: 'communications' },
+    // ── Constants ───────────────────────────────────────────────
+    const ALL_SERVICE_NAMES = [
+      'AWS', 'Google Cloud', 'Microsoft Azure', 'GitHub', 'GitLab',
+      'Vercel', 'Cloudflare', 'Slack', 'Microsoft Teams', 'Discord',
+      'Notion', 'Linear', 'Figma', 'Stripe', 'OpenAI',
+      'Anthropic', 'Reddit', 'X / Twitter', 'MongoDB', 'Supabase',
+      'Twilio', 'SendGrid', 'DeepSeek', 'Groq', 'Together AI',
+      'HuggingFace', 'Modal', 'Replicate', 'Runway', 'ElevenLabs',
     ];
 
-    const SERVICE_STATUS = {
-      'aws': 'up', 'google-cloud': 'up', 'azure': 'up',
-      'github': 'up', 'gitlab': 'up', 'vercel': 'up',
-      'cloudflare': 'up', 'slack': 'up', 'teams': 'up',
-      'discord': 'up', 'notion': 'up', 'linear': 'up',
-      'figma': 'up', 'stripe': 'up', 'openai': 'up',
-      'anthropic': 'up', 'reddit': 'up', 'twitter': 'up',
-      'mongodb': 'up', 'supabase': 'up', 'twilio': 'up',
-      'sendgrid': 'up',
+    const SERVICE_IDS = {
+      'AWS': 'aws', 'Google Cloud': 'google-cloud', 'Microsoft Azure': 'azure',
+      'GitHub': 'github', 'GitLab': 'gitlab', 'Vercel': 'vercel',
+      'Cloudflare': 'cloudflare', 'Slack': 'slack', 'Microsoft Teams': 'teams',
+      'Discord': 'discord', 'Notion': 'notion', 'Linear': 'linear',
+      'Figma': 'figma', 'Stripe': 'stripe', 'OpenAI': 'openai',
+      'Anthropic': 'anthropic', 'Reddit': 'reddit', 'X / Twitter': 'twitter',
+      'MongoDB': 'mongodb', 'Supabase': 'supabase', 'Twilio': 'twilio',
+      'SendGrid': 'sendgrid', 'DeepSeek': 'deepseek', 'Groq': 'groq',
+      'Together AI': 'together-ai', 'HuggingFace': 'huggingface',
+      'Modal': 'modal', 'Replicate': 'replicate', 'Runway': 'runway',
+      'ElevenLabs': 'elevenlabs',
     };
 
-    // Reddit subreddits to check for outage signals
-    const SUBREDDITS = ['sysadmin', 'cloud', 'devops', 'github', 'aws', 'SecurityLayout', 'tech', 'Technology'];
-
-    // ── State ────────────────────────────────────────────────────
-    let allIncidents = [];
+    // ── State ──────────────────────────────────────────────────
+    let apiData = null;
     let currentFilter = 'all';
     let searchQuery = '';
 
     // ── Utilities ────────────────────────────────────────────────
     const $ = id => document.getElementById(id);
-    const esc = v => String(v??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+    const esc = v => String(v??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const timeAgo = ts => {
       const diff = (Date.now() - new Date(ts).getTime()) / 1000;
-      if (diff < 60) return 'just now';
+      if (diff < 30) return 'just now';
+      if (diff < 60) return `${Math.floor(diff)}s ago`;
       if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
       if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
       return `${Math.floor(diff/86400)}d ago`;
     };
-    const toast = msg => {
+    const toast = (msg, isError = false) => {
       const el = $('toast');
       el.textContent = msg;
+      el.classList.toggle('error', isError);
       el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 3500);
+      setTimeout(() => el.classList.remove('show'), 4000);
     };
 
-    // ── Rendering ────────────────────────────────────────────────
-    function renderServices(filtered = SERVICES) {
+    // ── Navigation ──────────────────────────────────────────────
+    function scrollToSection(id) {
+      const el = id === 'feed'
+        ? $('feedSection')
+        : document.querySelector('.section-title');
+      el?.scrollIntoView({ behavior: 'smooth' });
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (id === 'feed') document.querySelectorAll('.nav-btn')[1]?.classList.add('active');
+      else document.querySelectorAll('.nav-btn')[0]?.classList.add('active');
+    }
+
+    // ── Stats ────────────────────────────────────────────────────
+    function renderStats(data) {
+      const stats = data.stats || {};
+      const summary = data.summary || {};
+      $('statUp').textContent = stats.up ?? '—';
+      $('statDegraded').textContent = stats.degraded ?? '—';
+      $('statDown').textContent = stats.down ?? '—';
+      $('statUnknown').textContent = stats.unknown ?? '—';
+      $('statSignals').textContent = summary.total ?? '—';
+
+      // Source breakdown
+      const srcs = summary.bySource || {};
+      const breakdown = Object.entries(srcs).map(([k, v]) =>
+        `<span class="src-chip">${esc(k)}: ${v}</span>`
+      ).join('');
+      $('srcBreakdown').innerHTML = breakdown;
+    }
+
+    // ── Service Cards ────────────────────────────────────────────
+    function renderServices(data, filter = '') {
       const grid = $('servicesGrid');
-      grid.innerHTML = filtered.map(svc => {
-        const status = SERVICE_STATUS[svc.id] || 'unknown';
+      const statuses = data.statuses || {};
+      const q = filter.toLowerCase().trim();
+
+      const services = ALL_SERVICE_NAMES
+        .map(name => {
+          const id = SERVICE_IDS[name] || name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+          return { id, name, ...statuses[id] };
+        })
+        .filter(s => {
+          if (!q) return true;
+          return s.name.toLowerCase().includes(q) ||
+            (s.incidentTitle || '').toLowerCase().includes(q);
+        })
+        .sort((a, b) => {
+          const order = { down: 0, degraded: 1, unknown: 2, up: 3 };
+          return (order[a.status] ?? 3) - (order[b.status] ?? 3);
+        });
+
+      if (!services.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:40px"><p>No services match "${esc(filter)}"</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = services.map(svc => {
+        const status = svc.status || 'unknown';
+        const sources = svc.sources || [];
+        const srcTags = [...new Set(sources)].slice(0, 3).map(src =>
+          `<span class="src-tag">${esc(src)}</span>`
+        ).join('');
+
         return `
-          <div class="service-card ${status}" onclick="scrollToIncidents('${svc.id}')">
+          <div class="service-card ${esc(status)}">
             <div class="service-header">
               <span class="service-name">${esc(svc.name)}</span>
-              <span class="service-status-dot"></span>
+              <span class="service-dot"></span>
             </div>
             <span class="service-badge">${status === 'up' ? 'Operational' : status === 'degraded' ? 'Degraded' : status === 'down' ? 'Down' : 'Unknown'}</span>
-            <span class="service-meta">${esc(svc.category)}</span>
+            ${srcTags ? `<div class="service-sources">${srcTags}</div>` : ''}
+            ${svc.lastChecked ? `<div class="service-meta">Checked ${timeAgo(svc.lastChecked)}</div>` : ''}
+            ${svc.incidentTitle ? `<div class="service-incident">${esc(svc.incidentTitle)}</div>` : ''}
           </div>`;
       }).join('');
+    }
 
-      // Stats
-      const up = filtered.filter(s => (SERVICE_STATUS[s.id] || 'unknown') === 'up').length;
-      const degraded = filtered.filter(s => (SERVICE_STATUS[s.id] || 'unknown') === 'degraded').length;
-      const down = filtered.filter(s => (SERVICE_STATUS[s.id] || 'unknown') === 'down').length;
-      $('statUp').textContent = up;
-      $('statDegraded').textContent = degraded;
-      $('statDown').textContent = down;
-      $('statIncidents').textContent = down + degraded;
+    // ── Incidents ─────────────────────────────────────────────────
+    function sourceTag(source) {
+      const map = {
+        'reddit': { cls: 'reddit', label: 'Reddit' },
+        'statuspage': { cls: 'statuspage', label: 'StatusPage' },
+        'downdetector': { cls: 'downdetector', label: 'DownDetector' },
+        'healthcheck': { cls: 'healthcheck', label: 'Health Check' },
+        'twitter': { cls: 'twitter', label: 'X / Twitter' },
+      };
+      const s = map[source] || { cls: 'healthcheck', label: source };
+      return `<span class="source-tag ${esc(s.cls)}">${esc(s.label)}</span>`;
     }
 
     function renderIncidents(incidents) {
       const list = $('incidentsList');
-      if (!incidents.length) {
+      const filtered = incidents.filter(i => {
+        if (currentFilter === 'down') return i.type === 'down';
+        if (currentFilter === 'degraded') return i.type === 'degraded';
+        return true;
+      });
+
+      const q = searchQuery.toLowerCase();
+      const final = q
+        ? filtered.filter(i => i.service.toLowerCase().includes(q) || (i.title||'').toLowerCase().includes(q))
+        : filtered;
+
+      $('feedCount').textContent = `${final.length} / ${incidents.length}`;
+
+      if (!final.length) {
         list.innerHTML = `
           <div class="empty-state">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <p>No active incidents. All services operational. 🎉</p>
+            <p>${currentFilter === 'all' ? 'No active incidents detected. All services nominal.' : `No ${currentFilter} incidents.`}</p>
           </div>`;
         return;
       }
-      list.innerHTML = incidents.map(inc => `
-        <div class="incident-card ${esc(inc.type)}-incident">
+
+      list.innerHTML = final.map(inc => `
+        <div class="incident-card ${esc(inc.type || 'degraded')}">
           <div class="incident-top">
-            <span class="incident-service">${esc(inc.service)}</span>
+            <div class="incident-left">
+              <span class="incident-service">${esc(inc.service)}</span>
+              <span class="incident-type-chip">${inc.type === 'down' ? 'Outage' : 'Degraded'}</span>
+            </div>
             <span class="incident-time">${timeAgo(inc.time)}</span>
           </div>
           <div class="incident-title">${esc(inc.title)}</div>
-          <div class="incident-source">
-            <span class="source-tag ${esc(inc.source)}">${inc.source === 'reddit' ? 'Reddit' : inc.source === 'status' ? 'Status Page' : 'Detector'}</span>
-            ${inc.redditUrl ? `<a class="reddit-link" href="${esc(inc.redditUrl)}" target="_blank" rel="noopener">View thread →</a>` : ''}
+          <div class="incident-sources">
+            ${sourceTag(inc.source)}
+            ${inc.redditUrl ? `<a class="incident-link" href="${esc(inc.redditUrl)}" target="_blank" rel="noopener">View source →</a>` : ''}
+            ${inc.incidentUrl ? `<a class="incident-link" href="${esc(inc.incidentUrl)}" target="_blank" rel="noopener">Incident →</a>` : ''}
+            ${inc.pageUrl ? `<a class="incident-link" href="${esc(inc.pageUrl)}" target="_blank" rel="noopener">Status page →</a>` : ''}
           </div>
+          ${inc.affectedCount ? `<div class="incident-meta"><span class="incident-meta-item"><span>${inc.affectedCount.toLocaleString()}</span> users affected</span></div>` : ''}
+          ${inc.score !== undefined ? `<div class="incident-meta"><span class="incident-meta-item">Score: <span>${inc.score}</span></span><span class="incident-meta-item">Comments: <span>${inc.comments || 0}</span></span></div>` : ''}
         </div>`).join('');
     }
 
-    function filterIncidents() {
-      let filtered = allIncidents;
-      if (currentFilter === 'down') filtered = filtered.filter(i => i.type === 'down');
-      else if (currentFilter === 'degraded') filtered = filtered.filter(i => i.type === 'degraded');
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        filtered = filtered.filter(i =>
-          i.service.toLowerCase().includes(q) ||
-          i.title.toLowerCase().includes(q)
-        );
-      }
-      renderIncidents(filtered);
-      const count = filtered.length;
-      $('feedTitle').textContent = currentFilter === 'all' ? `${count} reports` :
-        currentFilter === 'down' ? `${count} outage${count !== 1 ? 's' : ''}` : `${count} degraded`;
-    }
-
+    // ── Filter ───────────────────────────────────────────────────
     function setFilter(f) {
       currentFilter = f;
-      document.querySelectorAll('.filter-btn').forEach(b => {
-        b.classList.toggle('active', b.classList.contains(f + '-filter') ||
-          (f === 'all' && b.classList.contains('all-filter')));
-      });
-      filterIncidents();
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.filter-btn.${esc(f)}, .filter-btn${f === 'all' ? '.all' : ''}`)?.classList.add('active');
+      if (apiData) renderIncidents(apiData.signals || []);
     }
 
     function handleSearch(q) {
       searchQuery = q;
-      filterIncidents();
-      if (q) {
-        const matches = SERVICES.filter(s =>
-          s.name.toLowerCase().includes(q.toLowerCase())
-        );
-        renderServices(matches);
-      } else {
-        renderServices();
+      if (apiData) {
+        renderServices(apiData, q);
+        renderIncidents(apiData.signals || []);
       }
-    }
-
-    function scrollToIncidents(serviceId) {
-      const inc = allIncidents.filter(i => i.serviceId === serviceId);
-      if (!inc.length) return;
-      $('incidentsList').scrollIntoView({ behavior: 'smooth' });
-      toast(`Showing ${inc.length} incident${inc.length > 1 ? 's' : ''} for ${serviceId}`);
-    }
-
-    // ── Data Fetching ────────────────────────────────────────────
-    async function fetchStatusPages() {
-      // Fetch multiple status pages in parallel
-      const sources = [
-        { url: 'https://aws.amazon.com/about-aws/whats-new/recently-announced/', name: 'AWS' },
-        { url: 'https://status.github.com/', name: 'GitHub' },
-        { url: 'https://www.githubstatus.com/', name: 'GitHub' },
-        { url: 'https://vercel.status OK.io/', name: 'Vercel' },
-        { url: 'https://www.cloudflarestatus.com/', name: 'Cloudflare' },
-        { url: 'https://status.stripe.com/', name: 'Stripe' },
-        { url: 'https://openai.statuspage.io/', name: 'OpenAI' },
-        { url: 'https://status.anthropic.com/', name: 'Anthropic' },
-        { url: 'https://meta.statuspage.io/', name: 'Meta' },
-      ];
-
-      const results = await Promise.allSettled(
-        sources.map(async ({ url, name }) => {
-          try {
-            const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, {
-              signal: AbortSignal.timeout(6000)
-            });
-            if (!r.ok) return null;
-            const text = await r.text();
-            return { name, text, url };
-          } catch { return null; }
-        })
-      );
-
-      return results.filter(r => r.status === 'fulfilled' && r.value).map(r => r.value);
-    }
-
-    async function fetchRedditSignals() {
-      const incidents = [];
-      const now = Date.now();
-      const hourAgo = now - 3600000;
-
-      // Check a few key subreddits for recent outage discussions
-      const subs = ['sysadmin', 'aws', 'github', 'devops', 'cloud'];
-      const queries = ['down', 'outage', 'error 503', 'not working', 'service disruption'];
-
-      for (const sub of subs.slice(0, 3)) {
-        for (const query of queries.slice(0, 2)) {
-          try {
-            const url = `https://www.reddit.com/r/${sub}/search.json?q=${encodeURIComponent(query)}&sort=new&restrict_sr=1&limit=8&t=hour`;
-            const r = await fetch(url, {
-              headers: { 'User-Agent': 'ServicePulse/1.0 (outage monitor)' },
-              signal: AbortSignal.timeout(8000)
-            });
-            if (!r.ok) continue;
-            const data = await r.json();
-            const posts = data?.data?.children || [];
-            for (const post of posts) {
-              const p = post.data;
-              const postTime = p.created_utc * 1000;
-              if (postTime < hourAgo) continue;
-
-              // Detect which service
-              const title = (p.title || '').toLowerCase();
-              const service = detectService(p.title, p.selftext);
-              if (!service) continue;
-
-              const type = title.includes('completely down') || title.includes('#outage') ? 'down' : 'degraded';
-
-              incidents.push({
-                service,
-                serviceId: service.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-                title: p.title,
-                time: new Date(postTime).toISOString(),
-                source: 'reddit',
-                redditUrl: `https://reddit.com${p.permalink}`,
-                type
-              });
-            }
-          } catch { /* skip */ }
-        }
-      }
-
-      return incidents;
-    }
-
-    function detectService(title, body) {
-      const text = ((title || '') + ' ' + (body || '')).toLowerCase();
-      const services = {
-        'AWS': /aws|amazon web services|ec2|s3|lambda.*aws/i,
-        'GitHub': /github|git hub|gh actions/i,
-        'Vercel': /vercel|vercel\.com/i,
-        'Cloudflare': /cloudflare|cf-/i,
-        'Slack': /slack\.com|slack workspace/i,
-        'Discord': /discord|discordapp/i,
-        'Notion': /notion\.so|notion api/i,
-        'Linear': /linear\.app|linearhq/i,
-        'Figma': /figma\.com|figma$/i,
-        'Stripe': /stripe\.com|stripeapi/i,
-        'OpenAI': /openai|gpt-\d|chatgpt|api\.openai/i,
-        'Anthropic': /anthropic|claude\b/i,
-        'Reddit': /reddit\.com|r\//i,
-        'Twitter': /twitter\.com|x\.com social/i,
-        'MongoDB': /mongodb|mongo db|atlas/i,
-        'Supabase': /supabase/i,
-        'Microsoft Teams': /teams\.microsoft|ms teams|microsoft teams/i,
-        'Azure': /azure|microsoft azure/i,
-        'Google Cloud': /google cloud|gcp|google cloud platform/i,
-        'GitLab': /gitlab\.com|git lab/i,
-        'Twilio': /twilio/i,
-        'SendGrid': /sendgrid/i,
-      };
-
-      for (const [name, re] of Object.entries(services)) {
-        if (re.test(text)) return name;
-      }
-      return null;
     }
 
     // ── Main Load ────────────────────────────────────────────────
     async function load() {
       $('updated').textContent = 'Loading...';
-      $('servicesGrid').innerHTML = Array(8).fill('<div class="skeleton skeleton-card"></div>').join('');
+      $('errorBanner').style.display = 'none';
 
       try {
-        // Fetch reddit signals (primary source without API key)
-        const [redditIncidents] = await Promise.all([
-          fetchRedditSignals(),
-          // Could add: downdetector scraping, statuspage.io API calls
-        ]);
+        const r = await fetch('/api/signals', { cache: 'no-store' });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const data = await r.json();
+        apiData = data;
 
-        // Merge and dedupe
-        const seen = new Set();
-        allIncidents = [...redditIncidents].filter(inc => {
-          const key = inc.title.substring(0, 60) + inc.service;
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
+        renderStats(data);
+        renderServices(data, searchQuery);
+        renderIncidents(data.signals || []);
 
-        // Sort newest first
-        allIncidents.sort((a, b) => new Date(b.time) - new Date(a.time));
-
-        // Update service statuses based on detected incidents
-        const now = Date.now();
-        for (const inc of allIncidents) {
-          const key = inc.serviceId;
-          if (SERVICE_STATUS[key]) {
-            if (inc.type === 'down') SERVICE_STATUS[key] = 'down';
-            else if (inc.type === 'degraded' && SERVICE_STATUS[key] !== 'down') SERVICE_STATUS[key] = 'degraded';
-          }
-        }
-
-        renderServices();
-        filterIncidents();
-
-        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        $('updated').textContent = `Updated ${time}`;
-
+        const t = new Date(data.generatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        $('updated').textContent = `Updated ${t}`;
       } catch(e) {
-        console.error('Load error:', e);
-        renderServices();
-        renderIncidents([]);
         $('updated').textContent = 'Update failed';
-        toast('Could not fetch latest data. Showing cached view.');
+        $('errorBanner').style.display = 'flex';
+        $('errorMsg').textContent = `API error: ${e.message}. Showing cached view.`;
+        toast('Could not reach signal aggregator. Retrying...', true);
       }
     }
 
     function refresh() {
-      const btn = document.querySelector('.refresh-btn');
+      const btn = $('refreshBtn');
       btn.classList.add('spinning');
       load().finally(() => btn.classList.remove('spinning'));
     }
 
-    // ── Navigation ───────────────────────────────────────────────
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const view = btn.dataset.view;
-        if (view === 'all') {
-          $('servicesGrid').closest('.section-title').scrollIntoView({ behavior: 'smooth' });
-        } else {
-          $('incidentsList').closest('.section-title').scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    });
-
     // ── Init ─────────────────────────────────────────────────────
     load();
-    setInterval(refresh, 120000); // Auto-refresh every 2 minutes
+    setInterval(refresh, 90000); // Auto-refresh every 1.5 min
 
-    // ── Service Worker Registration ────────────────────────────────
+    // ── Service Worker ────────────────────────────────────────────
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
