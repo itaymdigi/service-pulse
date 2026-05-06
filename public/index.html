@@ -25,12 +25,23 @@
       --bad: #f05b5b; --bad-bg: rgba(240,91,91,.12);
       --pill-bg: rgba(255,255,255,.06);
     }
+    [data-theme="light"] {
+      --bg: #f5f6fa; --panel: #ffffff; --panel2: #eef0f5;
+      --border: rgba(0,0,0,.08); --border2: rgba(0,0,0,.13);
+      --text: #1a1d28; --muted: #6b7084;
+      --accent: #4a6fd4; --accent-dim: rgba(74,111,212,.1);
+      --ok: #1a9e72; --ok-bg: rgba(26,158,114,.1);
+      --warn: #d4881e; --warn-bg: rgba(212,136,30,.1);
+      --bad: #d43d3d; --bad-bg: rgba(212,61,61,.1);
+      --pill-bg: rgba(0,0,0,.05);
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       background: var(--bg); color: var(--text);
       font-family: 'Geist', system-ui, sans-serif;
       font-feature-settings: "liga"; letter-spacing: -.01em; min-height: 100vh;
+      transition: background .2s, color .2s;
     }
     body::before {
       content: ""; position: fixed; inset: 0; pointer-events: none;
@@ -40,11 +51,17 @@
       background-size: 44px 44px;
       mask-image: linear-gradient(to bottom, black, transparent 80%); z-index: 0;
     }
+    [data-theme="light"] body::before {
+      background-image:
+        linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px);
+    }
     header {
       position: sticky; top: 0; z-index: 10;
       background: rgba(12,14,20,.85); backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border); padding: 0 28px;
     }
+    [data-theme="light"] header { background: rgba(245,246,250,.9); }
     .nav {
       max-width: 1300px; margin: 0 auto; height: 62px;
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
@@ -58,6 +75,7 @@
     }
     .brand-icon svg { width: 16px; height: 16px; }
     .nav-center { display: flex; gap: 4px; }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
     .nav-btn {
       background: transparent; border: none; color: var(--muted);
       font: 500 13px Geist, sans-serif; padding: 6px 12px;
@@ -66,6 +84,14 @@
     .nav-btn:hover { color: var(--text); background: var(--pill-bg); }
     .nav-btn.active { color: var(--text); background: var(--panel2); }
     .nav-meta { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--muted); }
+    .icon-btn {
+      background: var(--panel2); border: 1px solid var(--border2);
+      color: var(--muted); width: 34px; height: 34px;
+      border-radius: 8px; cursor: pointer; display: grid; place-items: center;
+      transition: all .15s;
+    }
+    .icon-btn:hover { color: var(--text); border-color: var(--border2); }
+    .icon-btn svg { width: 15px; height: 15px; }
     .refresh-btn {
       background: var(--panel2); border: 1px solid var(--border2);
       color: var(--text); font: 500 13px Geist, sans-serif;
@@ -75,7 +101,19 @@
     .refresh-btn:hover { background: var(--accent); border-color: var(--accent); }
     .refresh-btn svg { width: 13px; height: 13px; transition: transform .5s; }
     .refresh-btn.spinning svg { transform: rotate(360deg); }
-    main { max-width: 1300px; margin: 0 auto; padding: 28px 28px 80px; position: relative; z-index: 1; }
+    main { max-width: 1300px; margin: 0 auto; padding: 28px 28px 100px; position: relative; z-index: 1; }
+
+    /* Time filter */
+    .time-filters { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .time-btn {
+      background: var(--pill-bg); border: 1px solid var(--border);
+      color: var(--muted); font: 500 12px Geist, sans-serif;
+      padding: 4px 12px; border-radius: 20px; cursor: pointer; transition: all .15s;
+    }
+    .time-btn:hover { color: var(--text); }
+    .time-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+    /* Stats */
     .stats-bar { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
     .stat-pill {
       display: flex; align-items: center; gap: 8px;
@@ -87,6 +125,8 @@
     .stat-pill .lbl { color: var(--muted); }
     .src-breakdown { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); display: flex; gap: 6px; flex-wrap: wrap; }
     .src-chip { background: var(--pill-bg); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; }
+
+    /* Search */
     .search-wrap { position: relative; margin-bottom: 20px; }
     .search-input {
       width: 100%; height: 44px;
@@ -98,7 +138,12 @@
     .search-input::placeholder { color: var(--muted); }
     .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,138,240,.14); }
     .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--muted); pointer-events: none; }
-    .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 14px; }
+
+    /* Section titles */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+
+    /* Services grid */
     .services-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
@@ -111,11 +156,13 @@
       transition: border-color .2s, transform .15s, box-shadow .2s;
       position: relative; overflow: hidden; cursor: default;
     }
+    .service-card.pinned { border-color: rgba(91,138,240,.3); }
+    .service-card.pinned::after { content: "★"; position: absolute; top: 10px; right: 12px; font-size: 12px; color: var(--accent); }
     .service-card::before {
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
       border-radius: 16px 16px 0 0; opacity: 0; transition: opacity .2s;
     }
-    .service-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+    .service-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); cursor: pointer; }
     .service-card:hover::before { opacity: 1; }
     .service-card.up::before { background: var(--ok); }
     .service-card.degraded::before { background: var(--warn); }
@@ -144,6 +191,8 @@
     .src-tag { font-size: 10px; font-family: 'Geist Mono', monospace; background: var(--pill-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; color: var(--muted); }
     .service-meta { font-size: 11px; color: var(--muted); font-family: 'Geist Mono', monospace; }
     .service-incident { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Feed */
     .feed-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
     .feed-title-group { display: flex; align-items: baseline; gap: 10px; }
     .feed-title { font-size: 15px; font-weight: 600; }
@@ -195,24 +244,139 @@
     .incident-meta { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
     .incident-meta-item { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); }
     .incident-meta-item span { color: var(--text); font-weight: 500; }
+
+    /* Source legend */
     .source-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; padding: 12px 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
     .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Empty & loading states */
     .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: .35; }
     .empty-state p { font-size: 14px; }
     .skeleton { background: linear-gradient(90deg, var(--panel) 25%, var(--panel2) 50%, var(--panel) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 14px; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     .skeleton-card { height: 108px; }
+
+    /* Toast */
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--panel2); border: 1px solid var(--border2); color: var(--text); font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.5); transition: transform .3s cubic-bezier(.34,1.56,.64,1); z-index: 100; white-space: nowrap; }
     .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Error banner */
     .error-banner { background: var(--bad-bg); border: 1px solid rgba(240,91,91,.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--bad); }
     .error-banner svg { width: 16px; height: 16px; flex-shrink: 0; }
-    @media (max-width: 700px) { header { padding: 0 16px; } main { padding: 20px 16px 80px; } .services-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 9px; } .nav-center { display: none; } .feed-filters { flex-wrap: wrap; } }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(0,0,0,.65); backdrop-filter: blur(4px);
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-sheet {
+      background: var(--panel); border: 1px solid var(--border2);
+      border-radius: 20px 20px 0 0; padding: 24px 24px 40px;
+      width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto;
+      transform: translateY(100%); transition: transform .3s cubic-bezier(.34,1.2,.64,1);
+    }
+    .modal-overlay.open .modal-sheet { transform: translateY(0); }
+    .modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 20px; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .modal-service-name { font-size: 22px; font-weight: 700; }
+    .modal-close {
+      background: var(--panel2); border: 1px solid var(--border);
+      color: var(--muted); width: 32px; height: 32px;
+      border-radius: 8px; cursor: pointer; display: grid; place-items: center;
+      transition: all .15s;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-close svg { width: 14px; height: 14px; }
+    .modal-section { margin-bottom: 20px; }
+    .modal-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 10px; }
+    .modal-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .modal-meta-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .modal-meta-label { font-size: 11px; color: var(--muted); font-family: 'Geist Mono', monospace; margin-bottom: 4px; }
+    .modal-meta-value { font-size: 14px; font-weight: 600; }
+    .modal-incidents { display: flex; flex-direction: column; gap: 8px; }
+    .modal-incident-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+    .modal-incident-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .modal-incident-time { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); }
+    .modal-status-chip { font-size: 10px; font-weight: 700; font-family: 'Geist Mono', monospace; padding: 2px 8px; border-radius: 5px; text-transform: uppercase; }
+    .modal-status-chip.down { background: var(--bad-bg); color: var(--bad); }
+    .modal-status-chip.degraded { background: var(--warn-bg); color: var(--warn); }
+    .modal-incident-title { font-size: 13px; line-height: 1.5; }
+
+    /* Bottom nav (mobile) */
+    .bottom-nav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+      background: rgba(12,14,20,.95); backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border); padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+    }
+    [data-theme="light"] .bottom-nav { background: rgba(245,246,250,.95); }
+    .bottom-nav-inner { display: flex; justify-content: space-around; max-width: 400px; margin: 0 auto; }
+    .bottom-nav-btn {
+      background: none; border: none; color: var(--muted);
+      font: 500 11px Geist, sans-serif; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 6px 16px; border-radius: 10px; transition: all .15s;
+    }
+    .bottom-nav-btn svg { width: 20px; height: 20px; }
+    .bottom-nav-btn.active { color: var(--accent); }
+    .bottom-nav-btn:hover { color: var(--text); }
+
+    /* PWA Install banner */
+    .install-banner {
+      display: none; position: fixed; bottom: 70px; left: 16px; right: 16px; z-index: 30;
+      background: var(--panel2); border: 1px solid var(--accent);
+      border-radius: 14px; padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+      animation: slide-up .3s ease;
+    }
+    @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .install-banner.show { display: flex; align-items: center; gap: 12px; }
+    .install-banner-text { flex: 1; }
+    .install-banner-title { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+    .install-banner-sub { font-size: 11px; color: var(--muted); }
+    .install-banner-btn {
+      background: var(--accent); border: none; color: white;
+      font: 600 12px Geist, sans-serif; padding: 8px 14px;
+      border-radius: 8px; cursor: pointer; white-space: nowrap;
+    }
+    .install-banner-close { background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px; }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      header { padding: 0 16px; }
+      main { padding: 16px 16px 110px; }
+      .services-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 9px; }
+      .nav-center { display: none !important; }
+      .feed-filters { flex-wrap: wrap; }
+      .bottom-nav { display: block; }
+      .stats-bar { gap: 7px; }
+      .stat-pill { padding: 6px 10px; font-size: 12px; }
+      .modal-sheet { border-radius: 16px 16px 0 0; }
+    }
+    @media (max-width: 400px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
   </style>
 </head>
 <body>
+
+  <!-- PWA Install Banner -->
+  <div class="install-banner" id="installBanner">
+    <div class="install-banner-text">
+      <div class="install-banner-title">Install ServicePulse</div>
+      <div class="install-banner-sub">Add to home screen for the best experience</div>
+    </div>
+    <button class="install-banner-btn" id="installBtn">Install</button>
+    <button class="install-banner-close" onclick="$('installBanner').classList.remove('show')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+    </button>
+  </div>
+
   <header>
     <div class="nav">
       <div class="brand">
@@ -223,7 +387,10 @@
         <button class="nav-btn active" onclick="scrollTo('services')">All Services</button>
         <button class="nav-btn" onclick="scrollTo('feed')">Live Incidents</button>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;">
+      <div class="nav-right">
+        <button class="icon-btn" id="themeBtn" title="Toggle theme" onclick="toggleTheme()">
+          <svg id="themeIcon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="3"/><path d="M8 1v1M8 14v1M1 8h1M14 8h1M3.05 3.05l.7.7M12.25 12.25l.7.7M3.05 12.95l.7-.7M12.25 3.75l.7-.7"/></svg>
+        </button>
         <span class="nav-meta" id="updated">—</span>
         <button class="refresh-btn" id="refreshBtn" onclick="refresh()">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
@@ -236,6 +403,13 @@
   </header>
 
   <main>
+    <!-- Time filter -->
+    <div class="time-filters">
+      <button class="time-btn active" data-time="1" onclick="setTimeFilter(1)">Last hour</button>
+      <button class="time-btn" data-time="24" onclick="setTimeFilter(24)">Last 24h</button>
+      <button class="time-btn" data-time="168" onclick="setTimeFilter(168)">Last 7 days</button>
+    </div>
+
     <div class="stats-bar" id="statsBar">
       <div class="stat-pill"><span class="dot" style="background:var(--ok)"></span><span class="val" id="statUp">—</span><span class="lbl">Operational</span></div>
       <div class="stat-pill"><span class="dot" style="background:var(--warn)"></span><span class="val" id="statDegraded">—</span><span class="lbl">Degraded</span></div>
@@ -264,13 +438,17 @@
       <div class="legend-item"><span class="legend-dot" style="background:var(--muted)"></span>Health Check</div>
     </div>
 
-    <div class="section-title">Services Status</div>
+    <div class="section-header">
+      <div class="section-title">Services Status</div>
+    </div>
     <div class="services-grid" id="servicesGrid">
       <div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div>
       <div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div>
     </div>
 
-    <div class="section-title" id="feedSection">Live Incidents</div>
+    <div class="section-header">
+      <div class="section-title" id="feedSection">Live Incidents</div>
+    </div>
     <div class="feed-header">
       <div class="feed-title-group">
         <div class="feed-title" id="feedTitle">Recent reports</div>
@@ -289,6 +467,38 @@
       </div>
     </div>
   </main>
+
+  <!-- Bottom Navigation (mobile) -->
+  <nav class="bottom-nav" id="bottomNav">
+    <div class="bottom-nav-inner">
+      <button class="bottom-nav-btn active" data-tab="services" onclick="bottomNavTo('services')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5"/></svg>
+        Services
+      </button>
+      <button class="bottom-nav-btn" data-tab="incidents" onclick="bottomNavTo('incidents')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 2v4M10 14v4M2 10h4M14 10h4"/><circle cx="10" cy="10" r="4"/></svg>
+        Incidents
+      </button>
+      <button class="bottom-nav-btn" data-tab="favorites" onclick="bottomNavTo('favorites')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3l1.8 3.6 4 .6-2.9 2.8.7 4L10 12l-3.6 1.9.7-4L4.2 7.2l4-.6L10 3z"/></svg>
+        Favorites
+      </button>
+    </div>
+  </nav>
+
+  <!-- Service Detail Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-service-name" id="modalServiceName">—</div>
+        <button class="modal-close" onclick="closeModal()">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+        </button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
 
   <div class="toast" id="toast"></div>
 
@@ -314,10 +524,12 @@
     let serviceStatuses = {};
     let currentFilter = 'all';
     let searchQuery = '';
+    let timeFilterHrs = 1;
+    let favorites = JSON.parse(localStorage.getItem('sp-favorites') || '[]');
 
     // ── Helpers ───────────────────────────────────────────────────
     const $ = id => document.getElementById(id);
-    const esc = v => String(v??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const esc = v => String(v??'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const timeAgo = ts => {
       const diff = (Date.now() - new Date(ts).getTime()) / 1000;
       if (diff < 30) return 'just now';
@@ -331,12 +543,177 @@
       setTimeout(() => el.classList.remove('show'), 4000);
     };
 
+    // ── Theme ──────────────────────────────────────────────────────
+    function toggleTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+      document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      localStorage.setItem('sp-theme', isDark ? 'light' : 'dark');
+      $('themeIcon').innerHTML = isDark
+        ? '<path d="M8 1v1M8 14v1M1 8h1M14 8h1M3.05 3.05l.7.7M12.25 12.25l.7.7M3.05 12.95l.7-.7M12.25 3.75l.7-.7"/><circle cx="8" cy="8" r="3"/>'
+        : '<circle cx="8" cy="8" r="3"/><path d="M8 1v1M8 14v1M1 8h1M14 8h1M3.05 3.05l.7.7M12.25 12.25l.7.7M3.05 12.95l.7-.7M12.25 3.75l.7-.7"/><path d="M2 12s2-4 6-4 6 4 6 4-2 4-6 4-6-4-6-4z" fill="currentColor"/>';
+    }
+    // Init theme
+    (function() {
+      const saved = localStorage.getItem('sp-theme');
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        $('themeIcon').innerHTML = '<circle cx="8" cy="8" r="3"/><path d="M8 1v1M8 14v1M1 8h1M14 8h1M3.05 3.05l.7.7M12.25 12.25l.7.7M3.05 12.95l.7-.7M12.25 3.75l.7-.7"/>';
+      }
+    })();
+
     function scrollTo(id) {
-      const el = id === 'feed' ? $('feedSection') : document.querySelector('.section-title');
-      el?.scrollIntoView({ behavior: 'smooth' });
+      if (id === 'feed' || id === 'incidents') {
+        $('feedSection')?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        document.querySelector('.section-title')?.scrollIntoView({ behavior: 'smooth' });
+      }
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.nav-btn')[id === 'feed' ? 1 : 0]?.classList.add('active');
     }
+
+    function bottomNavTo(tab) {
+      document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.bottom-nav-btn[data-tab="${tab}"]`)?.classList.add('active');
+      if (tab === 'services') {
+        document.querySelector('.section-title')?.scrollIntoView({ behavior: 'smooth' });
+        renderServices(allIncidents, searchQuery);
+        renderIncidents(allIncidents);
+      } else if (tab === 'incidents') {
+        $('feedSection')?.scrollIntoView({ behavior: 'smooth' });
+        renderIncidents(allIncidents);
+      } else if (tab === 'favorites') {
+        document.querySelector('.section-title')?.scrollIntoView({ behavior: 'smooth' });
+        renderFavorites();
+      }
+    }
+
+    function setTimeFilter(hrs) {
+      timeFilterHrs = hrs;
+      document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.time-btn[data-time="${hrs}"]`)?.classList.add('active');
+      renderStats(allIncidents);
+      renderServices(allIncidents, searchQuery);
+      renderIncidents(allIncidents);
+    }
+
+    // ── Time-filtered incidents ────────────────────────────────────
+    function filterByTime(incidents) {
+      const cutoff = Date.now() - (timeFilterHrs * 3600000);
+      return incidents.filter(inc => new Date(inc.time).getTime() >= cutoff);
+    }
+
+    // ── Favorites ─────────────────────────────────────────────────
+    function toggleFavorite(serviceId, e) {
+      e?.stopPropagation();
+      const idx = favorites.indexOf(serviceId);
+      if (idx >= 0) { favorites.splice(idx, 1); toast('Removed from favorites'); }
+      else { favorites.push(serviceId); toast('Added to favorites'); }
+      localStorage.setItem('sp-favorites', JSON.stringify(favorites));
+      renderServices(allIncidents, searchQuery);
+    }
+
+    function renderFavorites() {
+      const grid = $('servicesGrid');
+      const favItems = ALL_SERVICE_NAMES
+        .filter(n => favorites.includes(SERVICE_MAP[n]))
+        .map(n => {
+          const id = SERVICE_MAP[n];
+          const s = serviceStatuses[id] || {};
+          return { id, name: n, ...s };
+        });
+      if (!favItems.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:40px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p>No favorites yet. Tap ★ on any service to add it.</p></div>`;
+        return;
+      }
+      grid.innerHTML = favItems.map(svc => buildServiceCard(svc, true)).join('');
+    }
+
+    function buildServiceCard(svc, isPinned=false) {
+      const srcs = [...new Set(svc.sources||[])].slice(0,3).map(s => `<span class="src-tag">${esc(s)}</span>`).join('');
+      const pinClass = isPinned || favorites.includes(svc.id) ? ' pinned' : '';
+      return `<div class="service-card ${esc(svc.status||'unknown')}${pinClass}" onclick="openModal('${esc(svc.service||svc.name)}')">
+        <div class="service-header">
+          <span class="service-name">${esc(svc.service||svc.name||'')}</span>
+          <span class="service-dot"></span>
+        </div>
+        <span class="service-badge">${svc.status==='up'?'Operational':svc.status==='degraded'?'Degraded':svc.status==='down'?'Down':'Unknown'}</span>
+        ${srcs?`<div class="service-sources">${srcs}</div>`:''}
+        ${svc.lastChecked?`<div class="service-meta">Checked ${timeAgo(svc.lastChecked)}</div>`:''}
+        ${svc.incidentTitle?`<div class="service-incident">${esc(svc.incidentTitle)}</div>`:''}
+      </div>`;
+    }
+
+    // ── Modal ─────────────────────────────────────────────────────
+    function openModal(serviceName) {
+      const id = SERVICE_MAP[serviceName];
+      const svc = serviceStatuses[id] || {};
+      const svcIncidents = allIncidents.filter(i => i.serviceId === id);
+      const statusLabel = svc.status === 'up' ? 'Operational' : svc.status === 'degraded' ? 'Degraded' : svc.status === 'down' ? 'Down' : 'Unknown';
+      const statusClass = svc.status || 'unknown';
+
+      let incidentsHtml = '';
+      if (svcIncidents.length) {
+        incidentsHtml = `<div class="modal-section">
+          <div class="modal-section-title">Recent Incidents (${svcIncidents.length})</div>
+          <div class="modal-incidents">
+            ${svcIncidents.slice(0, 5).map(inc => `
+              <div class="modal-incident-card">
+                <div class="modal-incident-top">
+                  <span class="modal-status-chip ${esc(inc.type)}">${inc.type === 'down' ? 'Outage' : 'Degraded'}</span>
+                  <span class="modal-incident-time">${timeAgo(inc.time)}</span>
+                </div>
+                <div class="modal-incident-title">${esc(inc.title || '')}</div>
+                ${srcTag(inc.source)}
+                ${inc.redditUrl || inc.incidentUrl || inc.pageUrl ? `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">${inc.redditUrl ? `<a class="incident-link" href="${esc(inc.redditUrl)}" target="_blank">Reddit ↗</a>` : ''}${inc.incidentUrl ? `<a class="incident-link" href="${esc(inc.incidentUrl)}" target="_blank">Incident ↗</a>` : ''}${inc.pageUrl ? `<a class="incident-link" href="${esc(inc.pageUrl)}" target="_blank">Status Page ↗</a>` : ''}</div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>`;
+      } else {
+        incidentsHtml = `<div class="modal-section"><div class="modal-section-title">Recent Incidents</div><div class="empty-state" style="padding:20px"><p>No incidents for this service in the selected time range.</p></div></div>`;
+      }
+
+      $('modalServiceName').textContent = serviceName;
+      $('modalBody').innerHTML = `
+        <div class="modal-section">
+          <div class="modal-section-title">Status</div>
+          <div class="modal-meta-grid">
+            <div class="modal-meta-item">
+              <div class="modal-meta-label">Current</div>
+              <div class="modal-meta-value" style="color:var(--${statusClass === 'up' ? 'ok' : statusClass === 'degraded' ? 'warn' : statusClass === 'down' ? 'bad' : 'muted'})">${statusLabel}</div>
+            </div>
+            <div class="modal-meta-item">
+              <div class="modal-meta-label">Last checked</div>
+              <div class="modal-meta-value">${svc.lastChecked ? timeAgo(svc.lastChecked) : '—'}</div>
+            </div>
+            <div class="modal-meta-item">
+              <div class="modal-meta-label">Signals</div>
+              <div class="modal-meta-value">${svcIncidents.length}</div>
+            </div>
+            <div class="modal-meta-item">
+              <div class="modal-meta-label">Sources</div>
+              <div class="modal-meta-value">${[...new Set(svc.sources||[])].join(', ') || '—'}</div>
+            </div>
+          </div>
+        </div>
+        ${incidentsHtml}
+        <div class="modal-section">
+          <button class="refresh-btn" style="width:100%;justify-content:center;" onclick="toggleFavorite('${id}'); closeModal();">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9.5 2.5l2 4 4 .5-3 2.8.8 4L10 12l-3.3 1.8.8-4L3.5 7l4-.5 2-4z"/></svg>
+            ${favorites.includes(id) ? 'Remove from Favorites' : 'Add to Favorites'}
+          </button>
+        </div>
+      `;
+      $('modalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(e) {
+      if (e && e.target !== e.currentTarget) return;
+      $('modalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
     // ── Source 1: StatusPage.io ─────────────────────────────────
     async function fetchStatusPageSignals() {
@@ -540,7 +917,8 @@
 
     // ── Stats ─────────────────────────────────────────────────────
     function renderStats(incidents) {
-      const statuses = deriveStatuses(incidents);
+      const filtered = filterByTime(incidents);
+      const statuses = deriveStatuses(filtered);
       serviceStatuses = statuses;
       const stats = { up: 0, degraded: 0, down: 0, unknown: 0 };
       for (const s of Object.values(statuses)) stats[s.status] = (stats[s.status] || 0) + 1;
@@ -548,32 +926,32 @@
       $('statDegraded').textContent = stats.degraded;
       $('statDown').textContent = stats.down;
       $('statUnknown').textContent = stats.unknown;
-      $('statSignals').textContent = incidents.length;
-      const bySrc = incidents.reduce((a, s) => { a[s.source] = (a[s.source] || 0) + 1; return a; }, {});
+      $('statSignals').textContent = filtered.length;
+      const bySrc = filtered.reduce((a, s) => { a[s.source] = (a[s.source] || 0) + 1; return a; }, {});
       $('srcBreakdown').innerHTML = Object.entries(bySrc).map(([k,v]) => `<span class="src-chip">${esc(k)}:${v}</span>`).join('');
     }
 
     // ── Services ──────────────────────────────────────────────────
     function renderServices(incidents, filter = '') {
       const grid = $('servicesGrid');
+      const filtered = filterByTime(incidents);
       const statuses = serviceStatuses;
       const q = filter.toLowerCase().trim();
+
+      // Build list with favorites first
       const svcList = ALL_SERVICE_NAMES
         .filter(n => !q || n.toLowerCase().includes(q) || (statuses[SERVICE_MAP[n]]?.incidentTitle || '').toLowerCase().includes(q))
-        .map(n => ({ id: SERVICE_MAP[n], ...statuses[SERVICE_MAP[n]] }))
-        .sort((a,b) => { const o = {down:0,degraded:1,unknown:2,up:3}; return (o[a.status]??3)-(o[b.status]??3); });
+        .map(n => ({ id: SERVICE_MAP[n], name: n, ...statuses[SERVICE_MAP[n]] }))
+        .sort((a,b) => {
+          const fa = favorites.includes(a.id) ? 0 : 1;
+          const fb = favorites.includes(b.id) ? 0 : 1;
+          if (fa !== fb) return fa - fb;
+          const o = {down:0,degraded:1,unknown:2,up:3};
+          return (o[a.status]??3)-(o[b.status]??3);
+        });
 
       if (!svcList.length) { grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:40px"><p>No services match "${esc(filter)}"</p></div>`; return; }
-      grid.innerHTML = svcList.map(svc => {
-        const srcs = [...new Set(svc.sources||[])].slice(0,3).map(s => `<span class="src-tag">${esc(s)}</span>`).join('');
-        return `<div class="service-card ${esc(svc.status||'unknown')}">
-          <div class="service-header"><span class="service-name">${esc(svc.service||'')}</span><span class="service-dot"></span></div>
-          <span class="service-badge">${svc.status==='up'?'Operational':svc.status==='degraded'?'Degraded':svc.status==='down'?'Down':'Unknown'}</span>
-          ${srcs?`<div class="service-sources">${srcs}</div>`:''}
-          ${svc.lastChecked?`<div class="service-meta">Checked ${timeAgo(svc.lastChecked)}</div>`:''}
-          ${svc.incidentTitle?`<div class="service-incident">${esc(svc.incidentTitle)}</div>`:''}
-        </div>`;
-      }).join('');
+      grid.innerHTML = svcList.map(svc => buildServiceCard(svc)).join('');
     }
 
     // ── Incidents ─────────────────────────────────────────────────
@@ -585,11 +963,12 @@
 
     function renderIncidents(incidents) {
       const list = $('incidentsList');
-      let filtered = currentFilter === 'all' ? incidents : incidents.filter(i => i.type === currentFilter);
-      if (searchQuery) { const q=searchQuery.toLowerCase(); filtered = filtered.filter(i => i.service.toLowerCase().includes(q) || (i.title||'').toLowerCase().includes(q)); }
-      $('feedCount').textContent = `${filtered.length} / ${incidents.length}`;
-      if (!filtered.length) { list.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p>${currentFilter==='all'?'No active incidents detected.':'No '+currentFilter+' incidents.'}</p></div>`; return; }
-      list.innerHTML = filtered.map(inc => `<div class="incident-card ${esc(inc.type||'degraded')}">
+      const filtered = filterByTime(incidents);
+      let feedFiltered = currentFilter === 'all' ? filtered : filtered.filter(i => i.type === currentFilter);
+      if (searchQuery) { const q=searchQuery.toLowerCase(); feedFiltered = feedFiltered.filter(i => i.service.toLowerCase().includes(q) || (i.title||'').toLowerCase().includes(q)); }
+      $('feedCount').textContent = `${feedFiltered.length} / ${filtered.length}`;
+      if (!feedFiltered.length) { list.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p>${currentFilter==='all'?'No incidents in this time range.':'No '+currentFilter+' incidents.'}</p></div>`; return; }
+      list.innerHTML = feedFiltered.map(inc => `<div class="incident-card ${esc(inc.type||'degraded')}">
         <div class="incident-top">
           <div class="incident-left"><span class="incident-service">${esc(inc.service)}</span><span class="incident-type-chip">${inc.type==='down'?'Outage':'Degraded'}</span></div>
           <span class="incident-time">${timeAgo(inc.time)}</span>
@@ -633,8 +1012,15 @@
         ...(sp.value||[]), ...(rd.value||[]), ...(dd.value||[]), ...(hc.value||[]),
       ];
       const seen = new Set();
-      allIncidents = all.filter(inc => { const k = (inc.serviceId||'')+'|'+(inc.title||'').substring(0,50); if (seen.has(k)) return false; seen.add(k); return true; });
-      allIncidents.sort((a,b) => { if ((b.severity||1)!==(a.severity||1)) return (b.severity||1)-(a.severity||1); return new Date(b.time)-new Date(a.time); });
+      allIncidents = all.filter(inc => {
+        const k = (inc.serviceId||'')+'|'+(inc.title||'').substring(0,50);
+        if (seen.has(k)) return false;
+        seen.add(k); return true;
+      });
+      allIncidents.sort((a,b) => {
+        if ((b.severity||1)!==(a.severity||1)) return (b.severity||1)-(a.severity||1);
+        return new Date(b.time)-new Date(a.time);
+      });
 
       renderStats(allIncidents);
       renderServices(allIncidents, searchQuery);
@@ -648,6 +1034,21 @@
     setInterval(refresh, 90000);
 
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').then(r => console.log('[SW] registered',r.scope)).catch(e => console.warn('[SW]',e)); }); }
+
+    // PWA install
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      $('installBanner').classList.add('show');
+    });
+    $('installBtn')?.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      $('installBanner').classList.remove('show');
+    });
   </script>
 </body>
 </html>

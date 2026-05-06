@@ -24,5 +24,6 @@
   ],
   "categories": ["productivity", "utilities"],
   "lang": "en",
-  "dir": "ltr"
+  "dir": "ltr",
+  "prefer_related_applications": false
 }
