@@ -1,0 +1,13 @@
+{
+  "name": "service-pulse",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "node local-server.mjs"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
