@@ -899,18 +899,20 @@
     // ── Derive statuses ────────────────────────────────────────────
     function deriveStatuses(incidents) {
       const s = {};
+      // Default all to 'up' — unknown only when we have a source but no clear status
       for (const name of ALL_SERVICE_NAMES) {
         const id = SERVICE_MAP[name];
-        s[id] = { service: name, status: 'unknown', lastChecked: null, sources: [], incidentTitle: null };
+        s[id] = { service: name, status: 'up', lastChecked: null, sources: [], incidentTitle: null };
       }
       for (const inc of incidents) {
         const sid = inc.serviceId;
-        if (!s[sid]) s[sid] = { service: inc.service, status: 'unknown', lastChecked: null, sources: [], incidentTitle: null };
+        if (!s[sid]) s[sid] = { service: inc.service, status: 'up', lastChecked: null, sources: [], incidentTitle: null };
         const e = s[sid];
         e.lastChecked = inc.time;
         if (!e.sources.includes(inc.source)) e.sources.push(inc.source);
-        if (inc.type === 'down') { if (e.status !== 'down') { e.status = 'down'; e.incidentTitle = inc.title; } }
-        else if (inc.type === 'degraded' && e.status === 'unknown') { e.status = 'degraded'; e.incidentTitle = inc.title; }
+        // down overrides everything; degraded only if not already down
+        if (inc.type === 'down') { e.status = 'down'; e.incidentTitle = inc.title; }
+        else if (inc.type === 'degraded' && e.status !== 'down') { e.status = 'degraded'; e.incidentTitle = inc.title; }
       }
       return s;
     }
