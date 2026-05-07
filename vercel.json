@@ -18,7 +18,7 @@
       ]
     },
     {
-      "source": "/offline.html",
+      "source": "/offline",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]

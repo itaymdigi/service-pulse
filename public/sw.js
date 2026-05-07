@@ -5,7 +5,7 @@ const PRECACHE = [
   '/?sw=v5',
   '/manifest.json',
   '/icon.png',
-  '/offline.html',
+  '/offline',
 ];
 
 // Track the last known waiting SW URL so the banner shows on every update,
@@ -49,7 +49,7 @@ self.addEventListener('fetch', (event) => {
   if (request.headers.get('accept')?.includes('text/html')) {
     event.respondWith(
       fetch(request).catch(() =>
-        caches.match('/offline.html').then(r => r || new Response(
+        caches.match('/offline').then(r => r || new Response(
           '<html><body style="font-family:sans-serif;padding:40px;color:#666"><h2>You\'re offline</h2><p>ServicePulse needs a connection to fetch the latest status. Check your network and reload.</p></body></html>',
           { headers: { 'Content-Type': 'text/html' } }
         ))
