@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ServicePulse — Offline</title>
+  <meta name="theme-color" content="#0c0e14" />
+  <style>
+    :root { --bg: #0c0e14; --text: #f0f0f5; --muted: #6b7084; --accent: #5b8af0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Geist', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px 24px; text-align: center;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
+    }
+    .icon {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      display: grid; place-items: center; margin-bottom: 24px;
+      box-shadow: 0 0 40px rgba(91,138,240,.3);
+    }
+    .icon svg { width: 28px; height: 28px; color: white; }
+    h1 { font-size: 26px; font-weight: 700; margin-bottom: 12px; letter-spacing: -.5px; }
+    p { font-size: 15px; color: var(--muted); line-height: 1.65; max-width: 340px; margin-bottom: 28px; }
+    a {
+      background: var(--accent); color: white;
+      font-weight: 600; font-size: 14px;
+      padding: 12px 24px; border-radius: 12px;
+      text-decoration: none; display: inline-flex;
+      align-items: center; gap: 8px;
+    }
+    a:hover { opacity: .88; }
+    a svg { width: 14px; height: 14px; }
+    .hint { margin-top: 20px; font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="1" y1="1" x2="23" y2="23"/>
+      <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+      <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+      <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+      <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+      <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+      <line x1="12" y1="20" x2="12.01" y2="20"/>
+    </svg>
+  </div>
+  <h1>You're offline</h1>
+  <p>ServicePulse couldn't reach its data sources. Check your connection and try again.</p>
+  <a href="/" onclick="location.reload();return false">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M2 8a6 6 0 1 1 1.4 4"/>
+      <path d="M2 12V8h4"/>
+    </svg>
+    Try again
+  </a>
+  <p class="hint">Data shown may be stale until you're back online.</p>
+</body>
+</html>
